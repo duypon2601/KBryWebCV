@@ -2,6 +2,35 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Responsive helpers */
+/* Make media scale inside containers */
+img, video, canvas, svg {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Full-width container */
+.w-full {
+  width: 100%;
+}
+
+/* Fill at least the viewport height */
+.min-h-screen {
+  min-height: 100vh;
+}
+
+/* Background utilities for responsive cover images */
+.bg-cover-center {
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+}
+
+/* Optional fixed attachment for parallax-like effect */
+.bg-fixed {
+  background-attachment: fixed;
+}
+
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
