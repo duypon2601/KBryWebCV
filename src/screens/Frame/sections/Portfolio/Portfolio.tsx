@@ -1,7 +1,7 @@
 import { Col, Row } from "antd";
 import React from "react";
 import FooterSection from "./FooterSection";
-import HeaderSection from "./HeaderSection";
+
 import IntroductionSection from "./IntroductionSection";
 import PortfolioSection from "./PortfolioSection";
 import ProjectsSection from "./ProjectsSection";
@@ -13,11 +13,6 @@ const Portfolio = (): React.ReactElement => {
       className="bg-white border-2 border-solid border-[#ced4da]"
     >
       <Col span={24} className="bg-[#1e1e1e]">
-        <Row>
-          <Col span={24}>
-            <HeaderSection />
-          </Col>
-        </Row>
         <Row>
           <Col span={24}>
             <IntroductionSection />

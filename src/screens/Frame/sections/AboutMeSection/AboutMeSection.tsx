@@ -1,4 +1,5 @@
 import { Button, Card, Col, Divider, Row, Typography } from "antd";
+import { FeaturedProjectsSection } from "../FeaturedProjectsSection/FeaturedProjectsSection";
 
 const { Title, Paragraph } = Typography;
 
@@ -6,7 +7,14 @@ const { Title, Paragraph } = Typography;
 
 export const AboutMeSection = (): JSX.Element => {
   return (
-    <div style={{ width: "100%", position: "relative" }}>
+    <div style={{ width: "100%", position: "relative", display: "flex", minHeight: "100vh" }}>
+      {/* Sidebar with Featured Projects */}
+      <div className="w-[300px] flex-none bg-[#151515] border-r border-[#2d2d2d] overflow-visible">
+        <FeaturedProjectsSection />
+      </div>
+      
+      {/* Main Content */}
+      <div className="flex-1 min-w-0 max-w-full overflow-x-hidden">
       <div
         style={{
           width: "100%",
@@ -297,6 +305,7 @@ export const AboutMeSection = (): JSX.Element => {
         <div style={{ textAlign: "center", marginTop: "2rem" }}>
           <Button>Start a Conversation</Button>
         </div>
+      </div>
       </div>
     </div>
   );
