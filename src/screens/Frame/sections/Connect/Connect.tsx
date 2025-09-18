@@ -1,11 +1,39 @@
 import { MailOutlined, PhoneOutlined } from "@ant-design/icons";
 import { Button, Col, Form, Input, Row, Typography } from "antd";
-import React from "react";
+import { useState } from "react";
+import type { JSX } from 'react';
 import image from "./image.svg";
+import EditableSection from "../../../../components/EditableSection/EditableSection";
 
-const { Title, Paragraph } = Typography;
+const { Title } = Typography;
+const { TextArea } = Input;
+
+interface ContactInfo {
+  email: string;
+  phone: string;
+  heading: string;
+  subheading: string;
+  description: string;
+  followText: string;
+}
 
 const Connect = (): JSX.Element => {
+  const [contactInfo, setContactInfo] = useState<ContactInfo>({
+    email: "hello@artist.com",
+    phone: "+1 (555) 123-4567",
+    heading: "Let's Connect",
+    subheading: "Get In Touch",
+    description: "Whether you're looking for collaborations, bookings, or media inquiries, I'm always excited to connect with fellow creatives and music lovers.",
+    followText: "Follow My Journey"
+  });
+
+  const handleSave = (field: keyof ContactInfo) => (value: string) => {
+    setContactInfo(prev => ({
+      ...prev,
+      [field]: value
+    }));
+  };
+
   return (
     <div
       style={{
@@ -16,23 +44,38 @@ const Connect = (): JSX.Element => {
     >
       <Row justify="center" align="middle" style={{ minHeight: "100vh" }}>
         <Col span={24} style={{ textAlign: "center", marginBottom: "20px" }}>
-          <Title style={{ color: "#eaeaea" }}>
-            Let's <span style={{ color: "#ffb347" }}>Connect</span>
-          </Title>
-          <Paragraph style={{ color: "#adaebc" }}>
-            Ready to collaborate, book a show, or just say hello? Drop me a
-            line.
-          </Paragraph>
+          <EditableSection
+            title="Main Heading"
+            content={contactInfo.heading}
+            onSave={handleSave('heading')}
+            type="title"
+            level={1}
+            style={{ color: "#eaeaea" }}
+          />
+          <EditableSection
+            title="Subheading"
+            content="Ready to collaborate, book a show, or just say hello? Drop me a line."
+            onSave={() => {}}
+            type="paragraph"
+            style={{ color: "#adaebc", marginTop: '16px' }}
+          />
         </Col>
         <Col span={12} style={{ textAlign: "center" }}>
-          <Title level={3} style={{ color: "#f5a623" }}>
-            Get In Touch
-          </Title>
-          <Paragraph style={{ color: "#adaebc" }}>
-            Whether you're looking for collaborations, bookings, or media
-            inquiries, I'm always excited to connect with fellow creatives and
-            music lovers.
-          </Paragraph>
+          <EditableSection
+            title="Get In Touch"
+            content={contactInfo.subheading}
+            onSave={handleSave('subheading')}
+            type="subtitle"
+            level={3}
+            style={{ color: "#f5a623" }}
+          />
+          <EditableSection
+            title="Description"
+            content={contactInfo.description}
+            onSave={handleSave('description')}
+            type="paragraph"
+            style={{ color: "#adaebc" }}
+          />
           <Row gutter={[16, 16]} style={{ marginTop: "20px" }}>
             <Col span={24}>
               <Row align="middle">
@@ -49,15 +92,17 @@ const Connect = (): JSX.Element => {
                     />
                   </div>
                 </Col>
-                <Col>
-                  <div>
-                    <Title level={5} style={{ color: "#eaeaea" }}>
-                      Email
-                    </Title>
-                    <Paragraph style={{ color: "#adaebc" }}>
-                      hello@artist.com
-                    </Paragraph>
-                  </div>
+                <Col style={{ textAlign: 'left', marginLeft: '16px' }}>
+                  <Title level={5} style={{ color: "#eaeaea", marginBottom: '4px' }}>
+                    Email
+                  </Title>
+                  <EditableSection
+                    title="Email"
+                    content={contactInfo.email}
+                    onSave={handleSave('email')}
+                    type="text"
+                    style={{ color: "#adaebc" }}
+                  />
                 </Col>
               </Row>
             </Col>
@@ -76,23 +121,30 @@ const Connect = (): JSX.Element => {
                     />
                   </div>
                 </Col>
-                <Col>
-                  <div>
-                    <Title level={5} style={{ color: "#eaeaea" }}>
-                      Phone
-                    </Title>
-                    <Paragraph style={{ color: "#adaebc" }}>
-                      +1 (555) 123-4567
-                    </Paragraph>
-                  </div>
+                <Col style={{ textAlign: 'left', marginLeft: '16px' }}>
+                  <Title level={5} style={{ color: "#eaeaea", marginBottom: '4px' }}>
+                    Phone
+                  </Title>
+                  <EditableSection
+                    title="Phone"
+                    content={contactInfo.phone}
+                    onSave={handleSave('phone')}
+                    type="text"
+                    style={{ color: "#adaebc" }}
+                  />
                 </Col>
               </Row>
             </Col>
           </Row>
           <div style={{ marginTop: "20px" }}>
-            <Title level={4} style={{ color: "#eaeaea" }}>
-              Follow My Journey
-            </Title>
+            <EditableSection
+              title="Follow Text"
+              content={contactInfo.followText}
+              onSave={handleSave('followText')}
+              type="subtitle"
+              level={4}
+              style={{ color: "#eaeaea" }}
+            />
             <img
               src={image}
               alt="Social Media Icons"
@@ -141,7 +193,7 @@ const Connect = (): JSX.Element => {
                 />
               </Form.Item>
               <Form.Item label="Message" name="message">
-                <Input.TextArea
+                <TextArea
                   placeholder="Tell me about your project or inquiry..."
                   style={{
                     backgroundColor: "#1e1e1e",

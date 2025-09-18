@@ -1,11 +1,32 @@
-import { Button, Card, Col, Divider, Row, Typography } from "antd";
+import { Button, Card, Col, Divider, Input, Row, Typography } from "antd";
 import { FeaturedProjectsSection } from "../FeaturedProjectsSection/FeaturedProjectsSection";
+import { withEditableSection } from "../../../../components/withEditableSection";
+import type { WrappedComponentProps } from "../../../../components/withEditableSection";
+import React from 'react';
+import type { FC } from 'react';
+
+// Define interfaces for type safety
+interface AboutMeContent {
+  title: string;
+  description: string;
+}
+
+type AboutMeSectionProps = {
+  isEditing: boolean;
+  content: AboutMeContent;
+  onContentChange: (field: keyof AboutMeContent, value: string) => void;
+};
 
 const { Title, Paragraph } = Typography;
 
 // styled-components removed; using inline styles for layout
 
-export const AboutMeSection = (): JSX.Element => {
+// Main component implementation
+const AboutMeSectionContent: React.FC<AboutMeSectionProps> = ({
+  isEditing = false,
+  content = { title: 'Về Tôi', description: '' },
+  onContentChange = () => {}
+}: AboutMeSectionProps) => {
   return (
     <div style={{ width: "100%", position: "relative", display: "flex", minHeight: "100vh" }}>
       {/* Sidebar with Featured Projects */}
@@ -115,19 +136,41 @@ export const AboutMeSection = (): JSX.Element => {
       <div style={{ padding: "3rem 1rem", maxWidth: 1200, margin: "0 auto", width: "100%" }}>
         <Row justify="center" gutter={16}>
           <Col span={12}>
+            {isEditing ? (
+            <Input
+              value={content.title}
+              onChange={(e) => onContentChange('title', e.target.value)}
+              style={{
+                backgroundColor: '#2c2c2c',
+                color: '#eaeaea',
+                border: '1px solid #2d2d2d',
+                fontSize: '24px',
+                fontWeight: 'bold',
+                marginBottom: '16px'
+              }}
+            />
+          ) : (
             <Title level={2} style={{ color: "#eaeaea" }}>
-              About Me
+              {content.title}
             </Title>
-            <Paragraph style={{ color: "#a9a9a9" }}>
-              Tôi là một chuyên viên tổ chức và dàn dựng chương trình văn hóa
-              – nghệ thuật, với hơn 5 năm gắn bó cùng sân khấu và không gian
-              sáng tạo. Tôi tin rằng mỗi sự kiện là một câu chuyện, và nhiệm
-              vụ của tôi là kể nó bằng cảm xúc, sự chỉn chu và tinh thần
-              "trách nhiệm – thân thiện – tôn trọng".
-              <br />
-              Tôi luôn tìm kiếm những cơ hội để học hỏi, mở rộng trải nghiệm
-              và góp phần tạo nên những khoảnh khắc nghệ thuật đáng nhớ.
-            </Paragraph>
+          )}
+            {isEditing ? (
+              <Input.TextArea
+                value={content.description}
+                onChange={(e) => onContentChange('description', e.target.value)}
+                autoSize={{ minRows: 3, maxRows: 10 }}
+                style={{
+                  backgroundColor: '#2c2c2c',
+                  color: '#a9a9a9',
+                  border: '1px solid #2d2d2d',
+                  marginBottom: '16px'
+                }}
+              />
+            ) : (
+              <Paragraph style={{ color: "#a9a9a9" }}>
+                {content.description}
+              </Paragraph>
+            )}
           </Col>
           <Col span={12}>
             <div
@@ -227,12 +270,23 @@ export const AboutMeSection = (): JSX.Element => {
                 }
                 description={
                   <>
-                    <Paragraph style={{ color: "#a9a9a9", marginBottom: 0 }}>
-                      Cinematic • Film Score
-                    </Paragraph>
-                    <Paragraph style={{ color: "#f5a623", marginBottom: 0 }}>
-                      2023
-                    </Paragraph>
+                    {isEditing ? (
+                      <Input.TextArea
+                        value={content.description}
+                        onChange={(e) => onContentChange('description', e.target.value)}
+                        autoSize={{ minRows: 3, maxRows: 10 }}
+                        style={{
+                          backgroundColor: '#2c2c2c',
+                          color: '#a9a9a9',
+                          border: '1px solid #2d2d2d',
+                          marginBottom: '16px'
+                        }}
+                      />
+                    ) : (
+                      <p>
+                        {content.description || "I'm a passionate musician and producer with over 10 years of experience in the music industry. My journey in music started at a young age, and I've been fortunate to work with amazing artists and producers around the world."}
+                      </p>
+                    )}
                   </>
                 }
               />
@@ -310,3 +364,36 @@ export const AboutMeSection = (): JSX.Element => {
     </div>
   );
 };
+
+// Create the editable version of the component
+const EditableAboutMeSection = withEditableSection<AboutMeContent>(
+  AboutMeSectionContent as React.FC<WrappedComponentProps<AboutMeContent>>,
+  'About Me Section'
+);
+
+// Main component that provides default content
+const AboutMeSection: FC = () => {
+  const defaultContent: AboutMeContent = {
+    title: 'Về Tôi',
+    description: `Tôi là một chuyên viên tổ chức và dàn dựng chương trình văn hóa – nghệ thuật, 
+    với hơn 5 năm gắn bó cùng sân khấu và không gian sáng tạo. Tôi tin rằng mỗi sự kiện là một câu chuyện, 
+    và nhiệm vụ của tôi là kể nó bằng cảm xúc, sự chỉn chu và tinh thần "trách nhiệm – thân thiện – tôn trọng".`
+  };
+
+  const handleSave = (content: AboutMeContent) => {
+    console.log('Saving content:', content);
+    // Here you would typically save the content to an API
+  };
+
+
+  return (
+    <div className="about-me-section">
+      <EditableAboutMeSection 
+        defaultContent={defaultContent}
+        onSave={handleSave}
+      />
+    </div>
+  );
+};
+
+export default AboutMeSection;

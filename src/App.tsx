@@ -2,7 +2,7 @@ import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { Layout } from 'antd';
 import Header from './components/Header/Header';
-import { AboutMeSection } from './screens/Frame/sections/AboutMeSection/AboutMeSection';
+import AboutMeSection from './screens/Frame/sections/AboutMeSection/AboutMeSection';
 import Portfolio from './screens/Frame/sections/Portfolio/Portfolio';
 import AboutMe from './screens/Frame/sections/AboutMe/AboutMe';
 import Journey from './screens/Frame/sections/Journey/Journey';
