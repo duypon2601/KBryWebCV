@@ -87,8 +87,8 @@ button:focus-visible {
 
 @media (prefers-color-scheme: light) {
   :root {
-    color: #213547;
-    background-color: #ffffff;
+    color: #eaeaea;
+    background-color: #151515; /* Force dark background even in light mode */
   }
   a:hover {
     color: #747bff;
@@ -96,6 +96,17 @@ button:focus-visible {
   button {
     background-color: #f9f9f9;
   }
+}
+
+/* Force dark canvas behind all content to avoid white gaps around sections */
+html, body, #root {
+  background-color: #151515 !important;
+  color: #eaeaea;
+}
+
+/* Make Ant Design layout containers inherit the dark background */
+.ant-layout, .ant-layout-content, .ant-layout-header, .ant-layout-footer, .ant-layout-sider {
+  background: transparent !important;
 }
 
 /* View Transitions animations for route navigation */
