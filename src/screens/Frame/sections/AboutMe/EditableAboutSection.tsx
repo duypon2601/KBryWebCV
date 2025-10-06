@@ -86,7 +86,7 @@ const EditableAboutSection: React.FC = (): JSX.Element => {
           <img
             style={{ width: "100%", height: "auto" }}
             alt="Profile"
-            src="https://via.placeholder.com/520x334"
+            src="https://placehold.co/520x334"
           />
         </Col>
         <Col span={12}>

@@ -18,25 +18,13 @@ export const initializeSupabaseStorage = async () => {
     const bucketExists = buckets?.some(bucket => bucket.name === IMAGE_BUCKET);
     
     if (!bucketExists) {
-      console.log(`Creating bucket: ${IMAGE_BUCKET}`);
-      
-      // Tạo bucket mới
-      const { data, error } = await supabase.storage.createBucket(IMAGE_BUCKET, {
-        public: true, // Cho phép public access
-        allowedMimeTypes: ['image/jpeg', 'image/png', 'image/gif', 'image/webp'],
-        fileSizeLimit: 2097152, // 2MB
-      });
-
-      if (error) {
-        console.error('Error creating bucket:', error);
-        console.log('Please create the bucket manually in Supabase Dashboard:');
-        console.log('1. Go to Storage > Buckets');
-        console.log('2. Create new bucket named "project-images"');
-        console.log('3. Set it as public');
-        return false;
-      }
-
-      console.log('Bucket created successfully:', data);
+      console.warn(`Bucket "${IMAGE_BUCKET}" does not exist.`);
+      console.log('Client-side cannot create buckets due to RLS with anon key.');
+      console.log('Please create the bucket manually in Supabase Dashboard:');
+      console.log('1. Go to Storage > Buckets');
+      console.log(`2. Create new bucket named "${IMAGE_BUCKET}"`);
+      console.log('3. Set it as public');
+      return false;
     } else {
       console.log(`Bucket ${IMAGE_BUCKET} already exists`);
     }

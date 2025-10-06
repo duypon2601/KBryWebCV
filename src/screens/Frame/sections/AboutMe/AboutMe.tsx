@@ -1,4 +1,5 @@
 import { Layout } from "antd";
+import AutoAdvanceOnScroll from "../../../../components/AutoAdvanceOnScroll/AutoAdvanceOnScroll";
 import React, { type JSX } from "react";
 import EditableAboutSection from "./EditableAboutSection";
 
@@ -9,6 +10,7 @@ const AboutMe = (): JSX.Element => {
     <Layout style={{ backgroundColor: "#1e1e1e", border: "2px solid #ced4da" }}>
       <Content style={{ padding: "0 10%" }}>
         <EditableAboutSection />
+        <AutoAdvanceOnScroll />
       </Content>
     </Layout>
   );

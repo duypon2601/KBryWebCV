@@ -97,3 +97,35 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
+
+/* View Transitions animations for route navigation */
+html[data-nav-direction="forward"]::view-transition-old(root) {
+  animation: view-exit-left 400ms ease both;
+}
+html[data-nav-direction="forward"]::view-transition-new(root) {
+  animation: view-enter-right 400ms ease both;
+}
+
+html[data-nav-direction="backward"]::view-transition-old(root) {
+  animation: view-exit-right 400ms ease both;
+}
+html[data-nav-direction="backward"]::view-transition-new(root) {
+  animation: view-enter-left 400ms ease both;
+}
+
+@keyframes view-exit-left {
+  from { opacity: 1; transform: translateX(0); }
+  to { opacity: 0; transform: translateX(-6%); }
+}
+@keyframes view-enter-right {
+  from { opacity: 0; transform: translateX(6%); }
+  to { opacity: 1; transform: translateX(0); }
+}
+@keyframes view-exit-right {
+  from { opacity: 1; transform: translateX(0); }
+  to { opacity: 0; transform: translateX(6%); }
+}
+@keyframes view-enter-left {
+  from { opacity: 0; transform: translateX(-6%); }
+  to { opacity: 1; transform: translateX(0); }
+}

@@ -1,6 +1,7 @@
 import { MailOutlined, PhoneOutlined } from "@ant-design/icons";
 import { Button, Col, Form, Input, Row, Typography } from "antd";
 import React, { type JSX } from "react";
+import AutoAdvanceOnScroll from "../../../../components/AutoAdvanceOnScroll/AutoAdvanceOnScroll";
 
 const { Title, Paragraph } = Typography;
 
@@ -184,6 +185,7 @@ const Connect = (): JSX.Element => {
           </div>
         </Col>
       </Row>
+      <AutoAdvanceOnScroll />
     </div>
   );
 };

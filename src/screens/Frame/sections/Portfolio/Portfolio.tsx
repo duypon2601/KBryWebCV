@@ -1,6 +1,7 @@
 import { Col, Row } from "antd";
 import React from "react";
 import FooterSection from "./FooterSection";
+import AutoAdvanceOnScroll from "../../../../components/AutoAdvanceOnScroll/AutoAdvanceOnScroll";
 
 import IntroductionSection from "./IntroductionSection";
 import PortfolioSection from "./PortfolioSection";
@@ -33,6 +34,7 @@ const Portfolio = (): React.ReactElement => {
             <FooterSection />
           </Col>
         </Row>
+        <AutoAdvanceOnScroll />
       </Col>
     </Row>
   );

@@ -1,4 +1,5 @@
 import { Button, Card, Col, Divider, Input, Row, Typography } from "antd";
+import AutoAdvanceOnScroll from "../../../../components/AutoAdvanceOnScroll/AutoAdvanceOnScroll";
 import { FeaturedProjectsSection } from "../FeaturedProjectsSection/FeaturedProjectsSection";
 import { withEditableSection } from "../../../../components/withEditableSection";
 import type { WrappedComponentProps } from "../../../../components/withEditableSection";
@@ -6,16 +7,16 @@ import React from 'react';
 import type { FC } from 'react';
 
 // Define interfaces for type safety
-interface AboutMeContent {
+interface HomeContent {
   title: string;
   description: string;
   introduction: string;
 }
 
-type AboutMeSectionProps = {
+type HomeSectionProps = {
   isEditing: boolean;
-  content: AboutMeContent;
-  onContentChange: (field: keyof AboutMeContent, value: string) => void;
+  content: HomeContent;
+  onContentChange: (field: keyof HomeContent, value: string) => void;
 };
 
 const { Title, Paragraph } = Typography;
@@ -23,11 +24,11 @@ const { Title, Paragraph } = Typography;
 // styled-components removed; using inline styles for layout
 
 // Main component implementation
-const AboutMeSectionContent: React.FC<AboutMeSectionProps> = ({
+const HomeSectionContent: React.FC<HomeSectionProps> = ({
   isEditing = false,
   content = { title: 'Về Tôi', description: '', introduction: 'Mỗi tác phẩm là một nhịp cầu kết nối tâm hồn – tôi khai thác vẻ đẹp đa chiều của văn hóa và nghệ thuật để kể những câu chuyện đầy cảm xúc, gần gũi mà sâu sắc. Đây không chỉ là hành trình sáng tạo, mà còn là cách tôi lan tỏa cảm hứng và giá trị nhân văn đến cộng đồng.' },
   onContentChange = () => { }
-}: AboutMeSectionProps) => {
+}: HomeSectionProps) => {
   return (
     <div style={{ width: "100%", position: "relative", display: "flex", minHeight: "100vh" }}>
       {/* Sidebar with Featured Projects */}
@@ -380,34 +381,36 @@ const AboutMeSectionContent: React.FC<AboutMeSectionProps> = ({
           </div>
         </div>
       </div>
+      <AutoAdvanceOnScroll threshold={0.95} />
     </div>
   );
 };
 
 // Create the editable version of the component
-const EditableAboutMeSection = withEditableSection<AboutMeContent>(
-  AboutMeSectionContent as React.FC<WrappedComponentProps<AboutMeContent>>,
-  'About Me Section'
+const EditableHomeSection = withEditableSection<HomeContent>(
+  HomeSectionContent as React.FC<WrappedComponentProps<HomeContent>>,
+  'Home Section'
 );
 
 // Main component that provides default content
-const AboutMeSection: FC = () => {
-  const defaultContent: AboutMeContent = {
+const HomeSection: FC = () => {
+  const defaultContent: HomeContent = {
     title: 'Về Tôi',
     description: `Tôi là một chuyên viên tổ chức và dàn dựng chương trình văn hóa – nghệ thuật, 
     với hơn 5 năm gắn bó cùng sân khấu và không gian sáng tạo. Tôi tin rằng mỗi sự kiện là một câu chuyện, 
-    và nhiệm vụ của tôi là kể nó bằng cảm xúc, sự chỉn chu và tinh thần "trách nhiệm – thân thiện – tôn trọng".`
+    và nhiệm vụ của tôi là kể nó bằng cảm xúc, sự chỉn chu và tinh thần "trách nhiệm – thân thiện – tôn trọng".`,
+    introduction: 'Mỗi tác phẩm là một nhịp cầu kết nối tâm hồn – tôi khai thác vẻ đẹp đa chiều của văn hóa và nghệ thuật để kể những câu chuyện đầy cảm xúc, gần gũi mà sâu sắc. Đây không chỉ là hành trình sáng tạo, mà còn là cách tôi lan tỏa cảm hứng và giá trị nhân văn đến cộng đồng.'
   };
 
-  const handleSave = (content: AboutMeContent) => {
+  const handleSave = (content: HomeContent) => {
     console.log('Saving content:', content);
     // Here you would typically save the content to an API
   };
 
 
   return (
-    <div className="about-me-section">
-      <EditableAboutMeSection
+    <div className="home-section">
+      <EditableHomeSection
         defaultContent={defaultContent}
         onSave={handleSave}
       />
@@ -415,4 +418,4 @@ const AboutMeSection: FC = () => {
   );
 };
 
-export default AboutMeSection;
+export default HomeSection;

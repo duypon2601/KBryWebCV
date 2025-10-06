@@ -36,7 +36,7 @@ const Header = (): JSX.Element => {
         
         <div className={`menu-container ${isMobileMenuOpen ? 'mobile-visible' : ''}`}>
           <div className="menu-items">
-            <Link to="/" className={`menu-item ${isActive('/') ? 'active' : ''}`}>
+            <Link to="/home" className={`menu-item ${isActive('/home') ? 'active' : ''}`}>
               Home
             </Link>
             <Link to="/about-me" className={`menu-item ${isActive('/about-me') ? 'active' : ''}`}>
@@ -48,7 +48,7 @@ const Header = (): JSX.Element => {
             <Link to="/journey" className={`menu-item ${isActive('/journey') ? 'active' : ''}`}>
               Journey
             </Link>
-            <Link to="/connect" className={`menu-item ${isActive('/connect') ? 'active' : ''}`}>
+            <Link to="/contact" className={`menu-item ${isActive('/contact') ? 'active' : ''}`}>
               Contact
             </Link>
           </div>
