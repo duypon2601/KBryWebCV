@@ -13,13 +13,17 @@ export const useImageUpload = () => {
     try {
       setUploading(true);
 
+      if (!supabase) {
+        return { url: null, error: 'Supabase client is not initialized. Check env variables.' };
+      }
+
       // Tạo tên file unique
       const fileExt = file.name.split('.').pop();
       const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`;
       const filePath = `projects/${fileName}`;
 
       // Upload file lên Supabase Storage
-      const { data, error } = await supabase.storage
+      const { error } = await supabase.storage
         .from(IMAGE_BUCKET)
         .upload(filePath, file, {
           cacheControl: '3600',
@@ -50,6 +54,9 @@ export const useImageUpload = () => {
 
   const deleteImage = async (url: string): Promise<boolean> => {
     try {
+      if (!supabase) {
+        return false;
+      }
       // Extract file path from URL
       const urlParts = url.split('/');
       const filePath = urlParts.slice(-2).join('/'); // projects/filename.ext

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Button, Modal, Input, message } from 'antd';
 import { EditOutlined, LockOutlined, LogoutOutlined } from '@ant-design/icons';
-import { useEdit } from '../../contexts/EditContext';
+import { useEdit } from '../../contexts/EditContextCore';
 
 const EditModeToggle: React.FC = () => {
   const { isEditMode, toggleEditMode, isAuthenticated, login, logout } = useEdit();

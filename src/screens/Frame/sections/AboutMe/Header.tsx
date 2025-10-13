@@ -1,5 +1,5 @@
 import { Col, Row } from "antd";
-import React from "react";
+import type { JSX } from "react";
 
 const Header = (): JSX.Element => {
   return (

@@ -1,5 +1,5 @@
 import { Col, Image, Row, Typography } from "antd";
-import React from "react";
+import type { JSX } from "react";
 
 const { Title, Paragraph } = Typography;
 

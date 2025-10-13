@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { Fancybox } from "@fancyapps/ui";
 import "@fancyapps/ui/dist/fancybox/fancybox.css";
 import { EditOutlined, PlusOutlined } from "@ant-design/icons";
-import { useEdit } from "../../../../contexts/EditContext";
+import { useEdit } from "../../../../contexts/EditContextCore";
 import EditProjectModal from "../../../../components/EditProjectModal";
 
 interface Project {
