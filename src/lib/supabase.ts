@@ -1,10 +1,16 @@
 import { createClient } from '@supabase/supabase-js';
 
-// Thay thế bằng thông tin Supabase của bạn
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://nismnfejbdwweiiyiyby.supabase.co';
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5pc21uZmVqYmR3d2VpaXlpeWJ5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTkyOTg2MjEsImV4cCI6MjA3NDg3NDYyMX0.iRyOaIk-lBkXGelUniqHcu92c_43tWAkR1JLyXiBYsA';
+// Read from VITE_ envs only; do not ship secrets in code
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL as string;
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY as string;
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+if (!supabaseUrl || !supabaseAnonKey) {
+  // Fail fast in development; in production Vercel envs must be set
+  // eslint-disable-next-line no-console
+  console.error('Missing VITE_SUPABASE_URL or VITE_SUPABASE_ANON_KEY');
+}
 
-// Tên bucket để lưu trữ hình ảnh (đảm bảo khớp với bucket đã tạo)
+export const supabase = createClient(supabaseUrl ?? '', supabaseAnonKey ?? '');
+
+// Bucket name used across the app (must exist in Supabase Storage)
 export const IMAGE_BUCKET = 'projectkbry';
