@@ -87,8 +87,8 @@ button:focus-visible {
 
 @media (prefers-color-scheme: light) {
   :root {
-    color: #213547;
-    background-color: #ffffff;
+    color: #eaeaea;
+    background-color: #151515; /* Force dark background even in light mode */
   }
   a:hover {
     color: #747bff;
@@ -96,4 +96,47 @@ button:focus-visible {
   button {
     background-color: #f9f9f9;
   }
+}
+
+/* Force dark canvas behind all content to avoid white gaps around sections */
+html, body, #root {
+  background-color: #151515 !important;
+  color: #eaeaea;
+}
+
+/* Make Ant Design layout containers inherit the dark background */
+.ant-layout, .ant-layout-content, .ant-layout-header, .ant-layout-footer, .ant-layout-sider {
+  background: transparent !important;
+}
+
+/* View Transitions animations for route navigation */
+html[data-nav-direction="forward"]::view-transition-old(root) {
+  animation: view-exit-left 400ms ease both;
+}
+html[data-nav-direction="forward"]::view-transition-new(root) {
+  animation: view-enter-right 400ms ease both;
+}
+
+html[data-nav-direction="backward"]::view-transition-old(root) {
+  animation: view-exit-right 400ms ease both;
+}
+html[data-nav-direction="backward"]::view-transition-new(root) {
+  animation: view-enter-left 400ms ease both;
+}
+
+@keyframes view-exit-left {
+  from { opacity: 1; transform: translateX(0); }
+  to { opacity: 0; transform: translateX(-6%); }
+}
+@keyframes view-enter-right {
+  from { opacity: 0; transform: translateX(6%); }
+  to { opacity: 1; transform: translateX(0); }
+}
+@keyframes view-exit-right {
+  from { opacity: 1; transform: translateX(0); }
+  to { opacity: 0; transform: translateX(6%); }
+}
+@keyframes view-enter-left {
+  from { opacity: 0; transform: translateX(-6%); }
+  to { opacity: 1; transform: translateX(0); }
 }

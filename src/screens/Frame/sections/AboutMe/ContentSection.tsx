@@ -4,7 +4,7 @@ import {
     SoundOutlined,
   } from "@ant-design/icons";
   import { Card, Col, Divider, Row, Typography } from "antd";
-  import React, { type JSX } from "react";
+  import type { JSX } from "react";
   
   const { Title, Text, Paragraph } = Typography;
   
@@ -16,7 +16,7 @@ import {
             <img
               style={{ width: "100%", height: "auto" }}
               alt="Div"
-              src="https://via.placeholder.com/520x334"
+              src="https://placehold.co/520x334"
             />
           </Col>
           <Col span={12}>
