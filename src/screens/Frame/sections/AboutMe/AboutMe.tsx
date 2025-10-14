@@ -1,6 +1,6 @@
 import { Layout } from "antd";
 import AutoAdvanceOnScroll from "../../../../components/AutoAdvanceOnScroll/AutoAdvanceOnScroll";
-import React, { type JSX } from "react";
+import type { JSX } from "react";
 import EditableAboutSection from "./EditableAboutSection";
 
 const { Content } = Layout;

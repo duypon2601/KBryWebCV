@@ -1,5 +1,5 @@
 import { Layout } from "antd";
-import React, { type JSX } from "react";
+import type { JSX } from "react";
 
 import TimelineSection from "./TimelineSection";
 import AutoAdvanceOnScroll from "../../../../components/AutoAdvanceOnScroll/AutoAdvanceOnScroll";

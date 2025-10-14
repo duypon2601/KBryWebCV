@@ -1,14 +1,6 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react';
-
-interface EditContextType {
-  isEditMode: boolean;
-  toggleEditMode: () => void;
-  isAuthenticated: boolean;
-  login: (password: string) => boolean;
-  logout: () => void;
-}
-
-const EditContext = createContext<EditContextType | undefined>(undefined);
+import React, { useState } from 'react';
+import type { ReactNode } from 'react';
+import { EditContext } from './EditContextCore.js';
 
 interface EditProviderProps {
   children: ReactNode;
@@ -54,12 +46,4 @@ export const EditProvider: React.FC<EditProviderProps> = ({ children }) => {
       {children}
     </EditContext.Provider>
   );
-};
-
-export const useEdit = (): EditContextType => {
-  const context = useContext(EditContext);
-  if (context === undefined) {
-    throw new Error('useEdit must be used within an EditProvider');
-  }
-  return context;
 };

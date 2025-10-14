@@ -1,5 +1,5 @@
 import { Button, Col, Layout, Row, Typography } from "antd";
-import React from "react";
+import type { JSX } from "react";
 import image from "./image.svg";
 
 const { Footer } = Layout;
