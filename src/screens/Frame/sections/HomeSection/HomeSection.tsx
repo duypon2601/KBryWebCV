@@ -1,10 +1,12 @@
-import { Button, Card, Col, Divider, Input, Row, Typography } from "antd";
+import { Button, Card, Col, Divider, Input, Row, Typography, Spin } from "antd";
 import AutoAdvanceOnScroll from "../../../../components/AutoAdvanceOnScroll/AutoAdvanceOnScroll";
 import { FeaturedProjectsSection } from "../FeaturedProjectsSection/FeaturedProjectsSection";
 import { withEditableSection } from "../../../../components/withEditableSection";
 import type { WrappedComponentProps } from "../../../../components/withEditableSection";
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import type { FC } from 'react';
+import { useProjects } from "../../../../hooks/useProjects";
+import type { Project } from "../../../../types/project";
 
 // Define interfaces for type safety
 interface ProjectData {
@@ -18,17 +20,13 @@ interface HomeContent {
   title: string;
   description: string;
   introduction: string;
-  projects: {
-    project1: ProjectData;
-    project2: ProjectData;
-    project3: ProjectData;
-  };
+  projects: Project[];  // Change to array of Project from database
 }
 
 interface HomeSectionContentProps {
   isEditing: boolean;
   content: HomeContent;
-  onContentChange: (field: keyof HomeContent, value: string | HomeContent['projects']) => void;
+  onContentChange: (field: keyof HomeContent, value: string | Project[]) => void;
 }
 
 interface HomeSectionProps {
@@ -242,256 +240,45 @@ const HomeSectionContent: React.FC<HomeSectionContentProps> = ({
 
         <div style={{ padding: "3rem 1rem", maxWidth: 1200, margin: "0 auto", width: "100%" }}>
           <Title level={2} style={{ color: "#eaeaea", textAlign: "center", marginBottom: "2rem" }}>Featured Projects</Title>
+          
           <Row justify="center" gutter={16}>
-            <Col span={8}>
-              <Card
-                hoverable
-                cover={
-                  <div
-                    style={{
-                      width: "100%",
-                      aspectRatio: "16 / 9",
-                      backgroundImage: `url(${content.projects.project1.imageUrl})`,
-                      backgroundSize: "cover",
-                      backgroundPosition: "50% 50%",
-                    }}
-                  />
-                }
-                style={{
-                  backgroundColor: "#151515",
-                  borderColor: "#2d2d2d",
-                  borderRadius: "8px",
-                }}
-              >
-                <Card.Meta
-                  title={
-                    isEditing ? (
-                      <Input
-                        value={content.projects.project1.title}
-                        onChange={(e) => onContentChange('projects', {
-                          ...content.projects,
-                          project1: { ...content.projects.project1, title: e.target.value }
-                        })}
-                        style={{
-                          backgroundColor: '#2c2c2c',
-                          color: '#eaeaea',
-                          border: '1px solid #2d2d2d',
-                        }}
-                      />
-                    ) : (
-                      <span style={{ color: "#eaeaea" }}>{content.projects.project1.title}</span>
-                    )
+            {content.projects.slice(0, 3).map((project) => (
+              <Col span={8} key={project.id}>
+                <Card
+                  hoverable
+                  cover={
+                    <div
+                      style={{
+                        width: "100%",
+                        aspectRatio: "16 / 9",
+                        backgroundImage: `url(${project.image_url})`,
+                        backgroundSize: "cover",
+                        backgroundPosition: "50% 50%",
+                      }}
+                    />
                   }
-                  description={
-                    <>
-                      {isEditing ? (
-                        <Input
-                          value={content.projects.project1.genre}
-                          onChange={(e) => onContentChange('projects', {
-                            ...content.projects,
-                            project1: { ...content.projects.project1, genre: e.target.value }
-                          })}
-                          style={{
-                            backgroundColor: '#2c2c2c',
-                            color: '#a9a9a9',
-                            border: '1px solid #2d2d2d',
-                            marginBottom: '8px'
-                          }}
-                        />
-                      ) : (
+                  style={{
+                    backgroundColor: "#151515",
+                    borderColor: "#2d2d2d",
+                    borderRadius: "8px",
+                  }}
+                >
+                  <Card.Meta
+                    title={<span style={{ color: "#eaeaea" }}>{project.title}</span>}
+                    description={
+                      <>
                         <Paragraph style={{ color: "#a9a9a9", marginBottom: 0 }}>
-                          {content.projects.project1.genre}
+                          {project.genre}
                         </Paragraph>
-                      )}
-                      {isEditing ? (
-                        <Input
-                          value={content.projects.project1.year}
-                          onChange={(e) => onContentChange('projects', {
-                            ...content.projects,
-                            project1: { ...content.projects.project1, year: e.target.value }
-                          })}
-                          style={{
-                            backgroundColor: '#2c2c2c',
-                            color: '#f5a623',
-                            border: '1px solid #2d2d2d',
-                          }}
-                        />
-                      ) : (
                         <Paragraph style={{ color: "#f5a623", marginBottom: 0 }}>
-                          {content.projects.project1.year}
+                          {project.year}
                         </Paragraph>
-                      )}
-                    </>
-                  }
-                />
-              </Card>
-            </Col>
-            <Col span={8}>
-              <Card
-                hoverable
-                cover={
-                  <div
-                    style={{
-                      width: "100%",
-                      aspectRatio: "16 / 9",
-                      backgroundImage: `url(${content.projects.project2.imageUrl})`,
-                      backgroundSize: "cover",
-                      backgroundPosition: "50% 50%",
-                    }}
+                      </>
+                    }
                   />
-                }
-                style={{
-                  backgroundColor: "#151515",
-                  borderColor: "#2d2d2d",
-                  borderRadius: "8px",
-                }}
-              >
-                <Card.Meta
-                  title={
-                    isEditing ? (
-                      <Input
-                        value={content.projects.project2.title}
-                        onChange={(e) => onContentChange('projects', {
-                          ...content.projects,
-                          project2: { ...content.projects.project2, title: e.target.value }
-                        })}
-                        style={{
-                          backgroundColor: '#2c2c2c',
-                          color: '#eaeaea',
-                          border: '1px solid #2d2d2d',
-                        }}
-                      />
-                    ) : (
-                      <span style={{ color: "#eaeaea" }}>{content.projects.project2.title}</span>
-                    )
-                  }
-                  description={
-                    <>
-                      {isEditing ? (
-                        <Input
-                          value={content.projects.project2.genre}
-                          onChange={(e) => onContentChange('projects', {
-                            ...content.projects,
-                            project2: { ...content.projects.project2, genre: e.target.value }
-                          })}
-                          style={{
-                            backgroundColor: '#2c2c2c',
-                            color: '#a9a9a9',
-                            border: '1px solid #2d2d2d',
-                            marginBottom: '8px'
-                          }}
-                        />
-                      ) : (
-                        <Paragraph style={{ color: "#a9a9a9", marginBottom: 0 }}>
-                          {content.projects.project2.genre}
-                        </Paragraph>
-                      )}
-                      {isEditing ? (
-                        <Input
-                          value={content.projects.project2.year}
-                          onChange={(e) => onContentChange('projects', {
-                            ...content.projects,
-                            project2: { ...content.projects.project2, year: e.target.value }
-                          })}
-                          style={{
-                            backgroundColor: '#2c2c2c',
-                            color: '#f5a623',
-                            border: '1px solid #2d2d2d',
-                          }}
-                        />
-                      ) : (
-                        <Paragraph style={{ color: "#f5a623", marginBottom: 0 }}>
-                          {content.projects.project2.year}
-                        </Paragraph>
-                      )}
-                    </>
-                  }
-                />
-              </Card>
-            </Col>
-            <Col span={8}>
-              <Card
-                hoverable
-                cover={
-                  <div
-                    style={{
-                      width: "100%",
-                      aspectRatio: "16 / 9",
-                      backgroundImage: `url(${content.projects.project3.imageUrl})`,
-                      backgroundSize: "cover",
-                      backgroundPosition: "50% 50%",
-                    }}
-                  />
-                }
-                style={{
-                  backgroundColor: "#151515",
-                  borderColor: "#2d2d2d",
-                  borderRadius: "8px",
-                }}
-              >
-                <Card.Meta
-                  title={
-                    isEditing ? (
-                      <Input
-                        value={content.projects.project3.title}
-                        onChange={(e) => onContentChange('projects', {
-                          ...content.projects,
-                          project3: { ...content.projects.project3, title: e.target.value }
-                        })}
-                        style={{
-                          backgroundColor: '#2c2c2c',
-                          color: '#eaeaea',
-                          border: '1px solid #2d2d2d',
-                        }}
-                      />
-                    ) : (
-                      <span style={{ color: "#eaeaea" }}>{content.projects.project3.title}</span>
-                    )
-                  }
-                  description={
-                    <>
-                      {isEditing ? (
-                        <Input
-                          value={content.projects.project3.genre}
-                          onChange={(e) => onContentChange('projects', {
-                            ...content.projects,
-                            project3: { ...content.projects.project3, genre: e.target.value }
-                          })}
-                          style={{
-                            backgroundColor: '#2c2c2c',
-                            color: '#a9a9a9',
-                            border: '1px solid #2d2d2d',
-                            marginBottom: '8px'
-                          }}
-                        />
-                      ) : (
-                        <Paragraph style={{ color: "#a9a9a9", marginBottom: 0 }}>
-                          {content.projects.project3.genre}
-                        </Paragraph>
-                      )}
-                      {isEditing ? (
-                        <Input
-                          value={content.projects.project3.year}
-                          onChange={(e) => onContentChange('projects', {
-                            ...content.projects,
-                            project3: { ...content.projects.project3, year: e.target.value }
-                          })}
-                          style={{
-                            backgroundColor: '#2c2c2c',
-                            color: '#f5a623',
-                            border: '1px solid #2d2d2d',
-                          }}
-                        />
-                      ) : (
-                        <Paragraph style={{ color: "#f5a623", marginBottom: 0 }}>
-                          {content.projects.project3.year}
-                        </Paragraph>
-                      )}
-                    </>
-                  }
-                />
-              </Card>
-            </Col>
+                </Card>
+              </Col>
+            ))}
           </Row>
           <div style={{ textAlign: "center", marginTop: "2rem" }}>
             <Button>View All Projects</Button>
@@ -540,44 +327,53 @@ interface HomeSectionProps {
 }
 
 const HomeSection: FC<HomeSectionProps> = ({ defaultIsEditing }) => {
-  const defaultContent: HomeContent = {
+  // Lấy tất cả published projects thay vì chỉ featured
+  const { projects, loading } = useProjects({ is_published: true });
+  
+  const [content, setContent] = useState<HomeContent>({
     title: 'Về Tôi',
     description: `Tôi là một chuyên viên tổ chức và dàn dựng chương trình văn hóa – nghệ thuật, 
     với hơn 5 năm gắn bó cùng sân khấu và không gian sáng tạo. Tôi tin rằng mỗi sự kiện là một câu chuyện, 
     và nhiệm vụ của tôi là kể nó bằng cảm xúc, sự chỉn chu và tinh thần "trách nhiệm – thân thiện – tôn trọng".`,
     introduction: 'Mỗi tác phẩm là một nhịp cầu kết nối tâm hồn – tôi khai thác vẻ đẹp đa chiều của văn hóa và nghệ thuật để kể những câu chuyện đầy cảm xúc, gần gũi mà sâu sắc. Đây không chỉ là hành trình sáng tạo, mà còn là cách tôi lan tỏa cảm hứng và giá trị nhân văn đến cộng đồng.',
-    projects: {
-      project1: {
-        title: 'Neon Dreams',
-        genre: 'Electronic • Synthwave',
-        year: '2024',
-        imageUrl: 'https://c.animaapp.com/BleKbnjN/img/img-2@2x.png'
-      },
-      project2: {
-        title: 'Midnight Score',
-        genre: 'Cinematic • Orchestral',
-        year: '2024',
-        imageUrl: 'https://c.animaapp.com/BleKbnjN/img/img-3@2x.png'
-      },
-      project3: {
-        title: 'Digital Echoes',
-        genre: 'Ambient • Electronic',
-        year: '2024',
-        imageUrl: 'https://c.animaapp.com/BleKbnjN/img/img-4@2x.png'
-      }
-    }
-  };
+    projects: []
+  });
 
-  const handleSave = (content: HomeContent) => {
-    console.log('Saving content:', content);
+  // Update content when projects are loaded from database
+  useEffect(() => {
+    if (projects.length > 0) {
+      setContent(prev => ({
+        ...prev,
+        projects: projects
+      }));
+    }
+  }, [projects]);
+
+  const handleSave = (updatedContent: HomeContent) => {
+    console.log('Saving content:', updatedContent);
+    setContent(updatedContent);
     // Here you would typically save the content to an API
   };
 
+  if (loading) {
+    return (
+      <div style={{ 
+        display: 'flex', 
+        justifyContent: 'center', 
+        alignItems: 'center', 
+        minHeight: '100vh',
+        backgroundColor: '#1e1e1e'
+      }}>
+        <Spin size="large" />
+      </div>
+    );
+  }
 
   return (
     <div className="home-section">
       <EditableHomeSection
-        defaultContent={defaultContent}
+        key={`home-${content.projects.length}`}
+        defaultContent={content}
         onSave={handleSave}
         defaultIsEditing={defaultIsEditing}
       />

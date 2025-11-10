@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import type { ComponentType, FC } from 'react';
 import { Button } from 'antd';
 import { EditOutlined, SaveOutlined, CloseOutlined } from '@ant-design/icons';
@@ -27,6 +27,14 @@ export function withEditableSection<C>(
     const [content, setContent] = useState<C>(defaultContent);
     const [editableContent, setEditableContent] = useState<C>(defaultContent);
 
+    // Update content when defaultContent changes
+    useEffect(() => {
+      setContent(defaultContent);
+      if (!isEditing) {
+        setEditableContent(defaultContent);
+      }
+    }, [defaultContent, isEditing]);
+
     const handleEdit = () => {
       setEditableContent({ ...content });
       setIsEditing(true);
@@ -52,9 +60,6 @@ export function withEditableSection<C>(
         [field]: value
       }));
     };
-
-    // Log the section title for debugging
-    console.log(`Rendering editable section: ${sectionTitle}`);
 
     return (
       <div style={{ position: 'relative', padding: '20px', marginBottom: '20px' }}>

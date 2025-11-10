@@ -1,10 +1,12 @@
-import { Card, Col, Progress, Row, Button } from "antd";
+import { Card, Col, Progress, Row, Button, Spin, message } from "antd";
 import React, { useEffect, useState } from "react";
 import { Fancybox } from "@fancyapps/ui";
 import "@fancyapps/ui/dist/fancybox/fancybox.css";
 import { EditOutlined, PlusOutlined } from "@ant-design/icons";
 import { useEdit } from "../../../../contexts/EditContextCore";
 import EditProjectModal from "../../../../components/EditProjectModal";
+import { useProjects, useProjectMutations } from "../../../../hooks/useProjects";
+import type { Project as DBProject } from "../../../../types/project";
 
 interface Project {
   id: string;
@@ -15,31 +17,58 @@ interface Project {
   title?: string;
 }
 
-const initialProjects: Project[] = [
-  { id: "1", img: "/img.png", time: "4:32", year: "2024", video: "https://www.youtube.com/watch?v=ysz5S6PUM-U", title: "Dự án 1" },
-  { id: "2", img: "/image.png", time: "45:12", year: "2024", video: "https://www.youtube.com/watch?v=jNQXAC9IVRw", title: "Dự án 2" },
-  { id: "3", img: "/img-2.png", time: "38:45", year: "2023", video: "https://www.youtube.com/watch?v=oHg5SJYRHA0", title: "Dự án 3" },
-  { id: "4", img: "/img-3.png", time: "12:20", year: "2023", video: "https://www.youtube.com/watch?v=aqz-KE-bpKQ", title: "Dự án 4" },
-  { id: "5", img: "/img-4.png", time: "8:15", year: "2023", video: "https://www.youtube.com/watch?v=ScMzIvxBSi4", title: "Dự án 5" },
-  { id: "6", img: "/img-5.png", time: "22:30", year: "2022", video: "https://www.youtube.com/watch?v=dQw4w9WgXcQ", title: "Dự án 6" },
-];
+// Convert database project to UI project format
+const toUIProject = (dbProject: DBProject): Project => ({
+  id: dbProject.id,
+  img: dbProject.image_url,
+  time: (dbProject.metadata?.duration as string) || "0:00",
+  year: dbProject.year,
+  video: (dbProject.metadata?.video_url as string) || "",
+  title: dbProject.title,
+});
+
+// Convert UI project to database format
+const toDBProject = (uiProject: Project, order: number = 0) => ({
+  title: uiProject.title || `Project ${uiProject.id}`,
+  description: "",
+  genre: "Music Production",
+  year: uiProject.year,
+  image_url: uiProject.img,
+  category: 'portfolio' as const,
+  order,
+  is_published: true,
+  metadata: {
+    duration: uiProject.time,
+    video_url: uiProject.video,
+  },
+});
 
 const ProjectsSection: React.FC = () => {
   const { isEditMode } = useEdit();
-  const [projects, setProjects] = useState<Project[]>(() => {
-    try {
-      const stored = localStorage.getItem('kbry_projects');
-      if (stored) {
-        return JSON.parse(stored) as Project[];
-      }
-    } catch {
-      // ignore parse errors and fallback to defaults
-    }
-    return initialProjects;
+  const { projects: dbProjects, loading, refetch } = useProjects({ 
+    category: 'portfolio',
+    is_published: true 
   });
+  const { createProject, updateProject, deleteProject } = useProjectMutations();
+  
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [editingProject, setEditingProject] = useState<Project | null>(null);
   const [isNewProject, setIsNewProject] = useState(false);
+
+  // Fallback projects nếu database trống
+  const fallbackProjects: Project[] = [
+    { id: "1", img: "/img.png", time: "4:32", year: "2024", video: "https://www.youtube.com/watch?v=ysz5S6PUM-U", title: "Dự án 1" },
+    { id: "2", img: "/image.png", time: "45:12", year: "2024", video: "https://www.youtube.com/watch?v=jNQXAC9IVRw", title: "Dự án 2" },
+    { id: "3", img: "/img-2.png", time: "38:45", year: "2023", video: "https://www.youtube.com/watch?v=oHg5SJYRHA0", title: "Dự án 3" },
+    { id: "4", img: "/img-3.png", time: "12:20", year: "2023", video: "https://www.youtube.com/watch?v=aqz-KE-bpKQ", title: "Dự án 4" },
+    { id: "5", img: "/img-4.png", time: "8:15", year: "2023", video: "https://www.youtube.com/watch?v=ScMzIvxBSi4", title: "Dự án 5" },
+    { id: "6", img: "/img-5.png", time: "22:30", year: "2022", video: "https://www.youtube.com/watch?v=dQw4w9WgXcQ", title: "Dự án 6" },
+  ];
+
+  // Convert database projects to UI format, or use fallback
+  const projects = dbProjects.length > 0 
+    ? dbProjects.map(toUIProject)
+    : fallbackProjects;
 
   useEffect(() => {
     Fancybox.bind("[data-fancybox=projects]", {
@@ -49,15 +78,6 @@ const ProjectsSection: React.FC = () => {
     return () => {
       Fancybox.destroy();
     };
-  }, [projects]);
-
-  // Persist projects to localStorage whenever they change
-  useEffect(() => {
-    try {
-      localStorage.setItem('kbry_projects', JSON.stringify(projects));
-    } catch {
-      // ignore storage errors (e.g., quota exceeded)
-    }
   }, [projects]);
 
   const handleEditProject = (project: Project) => {
@@ -72,21 +92,52 @@ const ProjectsSection: React.FC = () => {
     setIsModalVisible(true);
   };
 
-  const handleSaveProject = (project: Project) => {
-    if (isNewProject) {
-      setProjects([...projects, project]);
-    } else {
-      setProjects(projects.map(p => p.id === project.id ? project : p));
+  const handleSaveProject = async (project: Project) => {
+    try {
+      if (isNewProject) {
+        const result = await createProject(toDBProject(project, projects.length));
+        if (result) {
+          message.success('Thêm dự án thành công!');
+          refetch();
+        } else {
+          message.error('Không thể thêm dự án');
+        }
+      } else {
+        const result = await updateProject(
+          project.id, 
+          toDBProject(project, projects.findIndex(p => p.id === project.id))
+        );
+        if (result) {
+          message.success('Cập nhật dự án thành công!');
+          refetch();
+        } else {
+          message.error('Không thể cập nhật dự án');
+        }
+      }
+      setIsModalVisible(false);
+      setEditingProject(null);
+      setIsNewProject(false);
+    } catch (error) {
+      console.error('Error saving project:', error);
+      message.error('Có lỗi xảy ra khi lưu dự án');
     }
-    setIsModalVisible(false);
-    setEditingProject(null);
-    setIsNewProject(false);
   };
 
-  const handleDeleteProject = (id: string) => {
-    setProjects(projects.filter(p => p.id !== id));
-    setIsModalVisible(false);
-    setEditingProject(null);
+  const handleDeleteProject = async (id: string) => {
+    try {
+      const result = await deleteProject(id);
+      if (result) {
+        message.success('Xóa dự án thành công!');
+        refetch();
+      } else {
+        message.error('Không thể xóa dự án');
+      }
+      setIsModalVisible(false);
+      setEditingProject(null);
+    } catch (error) {
+      console.error('Error deleting project:', error);
+      message.error('Có lỗi xảy ra khi xóa dự án');
+    }
   };
 
   const handleCardClick = (project: Project, e: React.MouseEvent) => {
@@ -95,6 +146,14 @@ const ProjectsSection: React.FC = () => {
       handleEditProject(project);
     }
   };
+
+  if (loading) {
+    return (
+      <Row justify="center" style={{ padding: 48 }}>
+        <Spin size="large" />
+      </Row>
+    );
+  }
 
   return (
     <>
@@ -112,6 +171,17 @@ const ProjectsSection: React.FC = () => {
             Thêm dự án
           </Button>
         </div>
+      )}
+
+      {projects.length === 0 && !loading && (
+        <Row justify="center" style={{ padding: 48 }}>
+          <div style={{ textAlign: 'center' }}>
+            <p style={{ color: '#a9a9a9', fontSize: 16 }}>
+              Chưa có dự án nào. 
+              {isEditMode && ' Nhấn "Thêm dự án" để tạo mới.'}
+            </p>
+          </div>
+        </Row>
       )}
       
       <Row gutter={[16, 16]} style={{ width: "100%", margin: 0 }}>

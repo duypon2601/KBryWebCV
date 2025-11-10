@@ -65,27 +65,36 @@ const EditProjectModal: React.FC<EditProjectModalProps> = ({
         const uploadResult = await uploadImage(imageFile);
         if (uploadResult.error) {
           message.error(`Lỗi upload hình ảnh: ${uploadResult.error}`);
+          setLoading(false);
           return;
         }
         finalImageUrl = uploadResult.url || imageUrl;
       }
       
+      // Validate image URL
+      if (!finalImageUrl) {
+        message.error('Vui lòng upload hình ảnh hoặc nhập link hình ảnh!');
+        setLoading(false);
+        return;
+      }
+      
       const updatedProject: Project = {
-        id: project?.id || Date.now().toString(),
-        title: values.title,
-        time: values.time,
-        year: values.year,
-        video: values.video,
+        id: project?.id || `project_${Date.now()}`,
+        title: values.title.trim(),
+        time: values.time.trim(),
+        year: values.year.trim(),
+        video: values.video.trim(),
         img: finalImageUrl,
       };
 
       onSave(updatedProject);
-      message.success(isNew ? 'Thêm dự án thành công!' : 'Cập nhật dự án thành công!');
+      // Message will be shown by parent component
       form.resetFields();
       setImageUrl('');
       setImageFile(null);
     } catch (error) {
       console.error('Validation failed:', error);
+      message.error('Vui lòng kiểm tra lại thông tin!');
     } finally {
       setLoading(false);
     }
@@ -94,14 +103,19 @@ const EditProjectModal: React.FC<EditProjectModalProps> = ({
   const handleDelete = () => {
     if (project && onDelete) {
       Modal.confirm({
-        title: 'Xác nhận xóa',
-        content: 'Bạn có chắc chắn muốn xóa dự án này?',
+        title: 'Xác nhận xóa dự án',
+        content: `Bạn có chắc chắn muốn xóa dự án "${project.title || 'này'}"? Hành động này không thể hoàn tác.`,
         okText: 'Xóa',
         okType: 'danger',
         cancelText: 'Hủy',
-        onOk: () => {
-          onDelete(project.id);
-          message.success('Xóa dự án thành công!');
+        onOk: async () => {
+          try {
+            await onDelete(project.id);
+            // Message will be shown by parent component
+          } catch (error) {
+            console.error('Error deleting project:', error);
+            message.error('Có lỗi xảy ra khi xóa dự án!');
+          }
         },
       });
     }
@@ -149,7 +163,10 @@ const EditProjectModal: React.FC<EditProjectModalProps> = ({
         <Form.Item
           label="Thời lượng"
           name="time"
-          rules={[{ required: true, message: 'Vui lòng nhập thời lượng!' }]}
+          rules={[
+            { required: true, message: 'Vui lòng nhập thời lượng!' },
+            { pattern: /^\d{1,2}:\d{2}$/, message: 'Định dạng: MM:SS hoặc M:SS (VD: 4:32)' }
+          ]}
         >
           <Input placeholder="VD: 4:32" />
         </Form.Item>
@@ -157,9 +174,12 @@ const EditProjectModal: React.FC<EditProjectModalProps> = ({
         <Form.Item
           label="Năm"
           name="year"
-          rules={[{ required: true, message: 'Vui lòng nhập năm!' }]}
+          rules={[
+            { required: true, message: 'Vui lòng nhập năm!' },
+            { pattern: /^\d{4}$/, message: 'Năm phải là 4 chữ số (VD: 2024)' }
+          ]}
         >
-          <Input placeholder="VD: 2024" />
+          <Input placeholder="VD: 2024" maxLength={4} />
         </Form.Item>
 
         <Form.Item

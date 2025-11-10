@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   CalendarOutlined,
   DownloadOutlined,
@@ -7,9 +7,10 @@ import {
   SoundOutlined,
   VideoCameraOutlined,
 } from "@ant-design/icons";
-import { Button, Col, Progress, Row, Input } from "antd";
+import { Button, Col, Progress, Row, Input, Spin, message } from "antd";
 import { withEditableSection } from "../../../../components/withEditableSection";
-import type { WrappedComponentProps } from "../../../../components/withEditableSection";
+import { useFeaturedProjects } from "../../../../hooks/useProjects";
+import type { Project } from "../../../../types/project";
 
 interface FeaturedContent {
   name: string;
@@ -30,6 +31,7 @@ interface FeaturedContent {
     vietnamese: number;
     daw: number;
   };
+  featuredProjects?: Project[];  // Add projects from database
 }
 
 interface FeaturedProjectsSectionProps {
@@ -625,7 +627,8 @@ interface FeaturedProjectsSectionMainProps {
 export const FeaturedProjectsSection: React.FC<FeaturedProjectsSectionMainProps> = ({
   defaultIsEditing,
 }) => {
-  const defaultContent: FeaturedContent = {
+  const { projects, loading } = useFeaturedProjects();
+  const [content, setContent] = useState<FeaturedContent>({
     name: "K'BRỲ",
     title: "Chuyên viên Tổ chức, dàn dựng chương trình văn hóa, nghệ thuật",
     location: "Ho Chi Minh City",
@@ -643,18 +646,41 @@ export const FeaturedProjectsSection: React.FC<FeaturedProjectsSectionMainProps>
       english: 85,
       vietnamese: 100,
       daw: 75
-    }
-  };
+    },
+    featuredProjects: []
+  });
 
-  const handleSave = (content: FeaturedContent) => {
-    console.log('Saving content:', content);
+  // Update content when projects load
+  useEffect(() => {
+    if (projects.length > 0) {
+      setContent(prev => ({
+        ...prev,
+        featuredProjects: projects
+      }));
+    }
+  }, [projects]);
+
+  const handleSave = (updatedContent: FeaturedContent) => {
+    console.log('Saving content:', updatedContent);
+    setContent(updatedContent);
+    message.success('Cập nhật thông tin thành công!');
     // Here you would typically save the content to an API
   };
+
+  if (loading) {
+    return (
+      <div className="bg-[#151515] border-r border-[#2d2d2d] w-full overflow-visible pt-4 px-4 md:pt-6 md:px-6 box-border">
+        <div style={{ display: 'flex', justifyContent: 'center', padding: '48px' }}>
+          <Spin size="large" />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="featured-projects-section">
       <EditableFeaturedProjectsSection
-        defaultContent={defaultContent}
+        defaultContent={content}
         onSave={handleSave}
         defaultIsEditing={defaultIsEditing}
       />

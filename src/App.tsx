@@ -6,6 +6,7 @@ import Portfolio from './screens/Frame/sections/Portfolio/Portfolio';
 import AboutMe from './screens/Frame/sections/AboutMe/AboutMe';
 import Journey from './screens/Frame/sections/Journey/Journey';
 import Connect from './screens/Frame/sections/Connect';
+import AdminProjectsPage from './screens/AdminProjects/AdminProjectsPage';
 import { EditProvider } from './contexts/EditContext';
 import EditModeToggle from './components/EditModeToggle';
 import { initializeSupabaseStorage } from './utils/initSupabase';
@@ -31,6 +32,7 @@ function App() {
             <Route path="/portfolio" element={<Portfolio />} />
             <Route path="/journey" element={<Journey />} />
             <Route path="/contact" element={<Connect />} />
+            <Route path="/admin/projects" element={<AdminProjectsPage />} />
           </Routes>
         </Content>
         <EditModeToggle />
