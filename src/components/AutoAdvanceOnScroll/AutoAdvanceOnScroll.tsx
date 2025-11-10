@@ -26,7 +26,7 @@ const DEFAULT_ROUTE_ORDER: string[] = ['/home', '/about-me', '/portfolio', '/jou
 // Global cooldown to prevent rapid skipping across multiple pages
 let lastNavigationAtMs = 0;
 const MIN_NAV_INTERVAL_MS = 500;
-const ARM_DELAY_MS = 0; // arm immediately after route change
+const ARM_DELAY_MS = 2000; // arm immediately after route change
 const MIN_SCROLL_DELTA_TO_NAV = 200; // require user scroll this much before next auto-advance
 
 export const AutoAdvanceOnScroll: React.FC<AutoAdvanceOnScrollProps> = ({

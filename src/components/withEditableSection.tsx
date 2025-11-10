@@ -6,6 +6,7 @@ import { EditOutlined, SaveOutlined, CloseOutlined } from '@ant-design/icons';
 // Props for the HOC
 interface HocProps<C> {
   defaultContent: C;
+  defaultIsEditing?: boolean;
   onSave?: (content: C) => void;
 }
 
@@ -21,8 +22,8 @@ export function withEditableSection<C>(
   sectionTitle: string
 ): FC<HocProps<C>> {
   return function EnhancedComponent(props: HocProps<C>) {
-    const { defaultContent, onSave, ...restProps } = props as HocProps<C> & Record<string, unknown>;
-    const [isEditing, setIsEditing] = useState(false);
+    const { defaultContent, defaultIsEditing = false, onSave, ...restProps } = props as HocProps<C> & Record<string, unknown>;
+    const [isEditing, setIsEditing] = useState(defaultIsEditing);
     const [content, setContent] = useState<C>(defaultContent);
     const [editableContent, setEditableContent] = useState<C>(defaultContent);
 

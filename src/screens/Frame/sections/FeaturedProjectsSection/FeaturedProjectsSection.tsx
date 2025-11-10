@@ -618,7 +618,13 @@ const EditableFeaturedProjectsSection = withEditableSection<FeaturedContent>(
 );
 
 // Main component that provides default content
-export const FeaturedProjectsSection: React.FC = () => {
+interface FeaturedProjectsSectionMainProps {
+  defaultIsEditing?: boolean;
+}
+
+export const FeaturedProjectsSection: React.FC<FeaturedProjectsSectionMainProps> = ({
+  defaultIsEditing,
+}) => {
   const defaultContent: FeaturedContent = {
     name: "K'BRỲ",
     title: "Chuyên viên Tổ chức, dàn dựng chương trình văn hóa, nghệ thuật",
@@ -650,6 +656,7 @@ export const FeaturedProjectsSection: React.FC = () => {
       <EditableFeaturedProjectsSection
         defaultContent={defaultContent}
         onSave={handleSave}
+        defaultIsEditing={defaultIsEditing}
       />
     </div>
   );
