@@ -7,9 +7,57 @@ import {
   SoundOutlined,
   VideoCameraOutlined,
 } from "@ant-design/icons";
-import { Button, Col, Progress, Row } from "antd";
+import { Button, Col, Progress, Row, Input } from "antd";
+import { withEditableSection } from "../../../../components/withEditableSection";
+import type { WrappedComponentProps } from "../../../../components/withEditableSection";
 
-export const FeaturedProjectsSection: React.FC = () => {
+interface FeaturedContent {
+  name: string;
+  title: string;
+  location: string;
+  year: string;
+  electronic: string;
+  cinematic: string;
+  skills: {
+    composition: number;
+    mixing: number;
+    mastering: number;
+    abletonLive: number;
+    logicPro: number;
+  };
+  languages: {
+    english: number;
+    vietnamese: number;
+    daw: number;
+  };
+}
+
+interface FeaturedProjectsSectionProps {
+  isEditing: boolean;
+  content: FeaturedContent;
+  onContentChange: (field: keyof FeaturedContent, value: any) => void;
+}
+
+const FeaturedProjectsSectionContent: React.FC<FeaturedProjectsSectionProps> = ({
+  isEditing,
+  content,
+  onContentChange,
+}) => {
+  const handleInputChange = (
+    key: keyof FeaturedContent | `skills.${keyof FeaturedContent['skills']}` | `languages.${keyof FeaturedContent['languages']}`,
+    value: string | number
+  ) => {
+    if (key.includes('.')) {
+      const [section, field] = key.split('.');
+      onContentChange(section as keyof FeaturedContent, {
+        ...content[section as keyof Pick<FeaturedContent, 'skills' | 'languages'>],
+        [field]: value
+      });
+    } else {
+      onContentChange(key as keyof FeaturedContent, value.toString());
+    }
+  };
+
   return (
     <div className="bg-[#151515] border-r border-[#2d2d2d] w-full overflow-visible pt-4 px-4 md:pt-6 md:px-6 box-border">
       <Row gutter={[16, 16]} style={{ marginLeft: 0, marginRight: 0, marginTop: "1rem" }}>
@@ -40,11 +88,38 @@ export const FeaturedProjectsSection: React.FC = () => {
                 fontWeight: "bold",
               }}
             >
-              K'BRỲ
+              {isEditing ? (
+                <Input
+                  value={content.name}
+                  onChange={(e) => handleInputChange('name', e.target.value)}
+                  style={{
+                    textAlign: 'center',
+                    color: '#eaeaea',
+                    backgroundColor: 'transparent',
+                    border: '1px dashed #f5a623'
+                  }}
+                />
+              ) : (
+                content.name || "K'BRỲ"
+              )}
             </div>
-            <p style={{ color: "#a9a9a9", fontSize: "14px" }}>
-              Chuyên viên Tổ chức, dàn dựng chương trình văn hóa, nghệ thuật
-            </p>
+            {isEditing ? (
+              <Input
+                value={content.title}
+                onChange={(e) => handleInputChange('title', e.target.value)}
+                style={{
+                  color: "#a9a9a9",
+                  fontSize: "14px",
+                  textAlign: 'center',
+                  backgroundColor: 'transparent',
+                  border: '1px dashed #f5a623'
+                }}
+              />
+            ) : (
+              <p style={{ color: "#a9a9a9", fontSize: "14px" }}>
+                {content.title || "Chuyên viên Tổ chức, dàn dựng chương trình văn hóa, nghệ thuật"}
+              </p>
+            )}
           </div>
         </Col>
 
@@ -52,25 +127,83 @@ export const FeaturedProjectsSection: React.FC = () => {
           <Row gutter={[8, 8]} style={{ marginLeft: 0, marginRight: 0 }}>
             <Col span={24}>
               <EnvironmentOutlined style={{ color: "#a9a9a9" }} />
-              <span style={{ marginLeft: "8px", color: "#a9a9a9" }}>
-                Ho Chi Minh City
-              </span>
+              {isEditing ? (
+                <Input
+                  value={content.location}
+                  onChange={(e) => handleInputChange('location', e.target.value)}
+                  style={{
+                    marginLeft: "8px",
+                    color: "#a9a9a9",
+                    backgroundColor: 'transparent',
+                    border: '1px dashed #f5a623',
+                    width: 'calc(100% - 24px)'
+                  }}
+                />
+              ) : (
+                <span style={{ marginLeft: "8px", color: "#a9a9a9" }}>
+                  {content.location || "Ho Chi Minh City"}
+                </span>
+              )}
             </Col>
             <Col span={24}>
               <CalendarOutlined style={{ color: "#a9a9a9" }} />
-              <span style={{ marginLeft: "8px", color: "#a9a9a9" }}>2002</span>
+              {isEditing ? (
+                <Input
+                  value={content.year}
+                  onChange={(e) => handleInputChange('year', e.target.value)}
+                  style={{
+                    marginLeft: "8px",
+                    color: "#a9a9a9",
+                    backgroundColor: 'transparent',
+                    border: '1px dashed #f5a623',
+                    width: 'calc(100% - 24px)'
+                  }}
+                />
+              ) : (
+                <span style={{ marginLeft: "8px", color: "#a9a9a9" }}>
+                  {content.year || "2002"}
+                </span>
+              )}
             </Col>
             <Col span={24}>
               <SoundOutlined style={{ color: "#a9a9a9" }} />
-              <span style={{ marginLeft: "8px", color: "#a9a9a9" }}>
-                Electronic
-              </span>
+              {isEditing ? (
+                <Input
+                  value={content.electronic}
+                  onChange={(e) => handleInputChange('electronic', e.target.value)}
+                  style={{
+                    marginLeft: "8px",
+                    color: "#a9a9a9",
+                    backgroundColor: 'transparent',
+                    border: '1px dashed #f5a623',
+                    width: 'calc(100% - 24px)'
+                  }}
+                />
+              ) : (
+                <span style={{ marginLeft: "8px", color: "#a9a9a9" }}>
+                  {content.electronic || "Electronic"}
+                </span>
+              )}
             </Col>
             <Col span={24}>
               <VideoCameraOutlined style={{ color: "#a9a9a9" }} />
-              <span style={{ marginLeft: "8px", color: "#a9a9a9" }}>
-                Cinematic
-              </span>
+              {isEditing ? (
+                <Input
+                  value={content.cinematic}
+                  onChange={(e) => handleInputChange('cinematic', e.target.value)}
+                  style={{
+                    marginLeft: "8px",
+                    color: "#a9a9a9",
+                    backgroundColor: 'transparent',
+                    border: '1px dashed #f5a623',
+                    width: 'calc(100% - 24px)'
+                  }}
+                />
+              ) : (
+                <span style={{ marginLeft: "8px", color: "#a9a9a9" }}>
+                  {content.cinematic || "Cinematic"}
+                </span>
+              )}
             </Col>
           </Row>
         </Col>
@@ -92,13 +225,26 @@ export const FeaturedProjectsSection: React.FC = () => {
                 }}
               >
                 <span>Composition</span>
-                <span>95%</span>
+                <span>{content.skills?.composition || 95}%</span>
               </div>
               <Progress
-                percent={95}
+                percent={content.skills?.composition || 95}
                 showInfo={false}
                 strokeColor="linear-gradient(90deg, rgba(245,166,35,1) 0%, rgba(255,200,87,1) 100%)"
               />
+              {isEditing && (
+                <Input
+                  type="number"
+                  value={content.skills?.composition}
+                  onChange={(e) => handleInputChange('skills.composition', parseInt(e.target.value))}
+                  style={{
+                    marginTop: "4px",
+                    width: "60px",
+                    backgroundColor: 'transparent',
+                    border: '1px dashed #f5a623'
+                  }}
+                />
+              )}
             </Col>
             <Col span={24}>
               <div
@@ -110,13 +256,26 @@ export const FeaturedProjectsSection: React.FC = () => {
                 }}
               >
                 <span>Mixing</span>
-                <span>90%</span>
+                <span>{content.skills?.mixing || 90}%</span>
               </div>
               <Progress
-                percent={90}
+                percent={content.skills?.mixing || 90}
                 showInfo={false}
                 strokeColor="linear-gradient(90deg, rgba(245,166,35,1) 0%, rgba(255,200,87,1) 100%)"
               />
+              {isEditing && (
+                <Input
+                  type="number"
+                  value={content.skills?.mixing}
+                  onChange={(e) => handleInputChange('skills.mixing', parseInt(e.target.value))}
+                  style={{
+                    marginTop: "4px",
+                    width: "60px",
+                    backgroundColor: 'transparent',
+                    border: '1px dashed #f5a623'
+                  }}
+                />
+              )}
             </Col>
             <Col span={24}>
               <div
@@ -128,13 +287,26 @@ export const FeaturedProjectsSection: React.FC = () => {
                 }}
               >
                 <span>Mastering</span>
-                <span>85%</span>
+                <span>{content.skills?.mastering || 85}%</span>
               </div>
               <Progress
-                percent={85}
+                percent={content.skills?.mastering || 85}
                 showInfo={false}
                 strokeColor="linear-gradient(90deg, rgba(245,166,35,1) 0%, rgba(255,200,87,1) 100%)"
               />
+              {isEditing && (
+                <Input
+                  type="number" 
+                  value={content.skills?.mastering}
+                  onChange={(e) => handleInputChange('skills.mastering', parseInt(e.target.value))}
+                  style={{
+                    marginTop: "4px",
+                    width: "60px",
+                    backgroundColor: 'transparent',
+                    border: '1px dashed #f5a623'
+                  }}
+                />
+              )}
             </Col>
             <Col span={24}>
               <div
@@ -146,13 +318,26 @@ export const FeaturedProjectsSection: React.FC = () => {
                 }}
               >
                 <span>Ableton Live</span>
-                <span>92%</span>
+                <span>{content.skills?.abletonLive || 92}%</span>
               </div>
               <Progress
-                percent={92}
+                percent={content.skills?.abletonLive || 92}
                 showInfo={false}
                 strokeColor="linear-gradient(90deg, rgba(245,166,35,1) 0%, rgba(255,200,87,1) 100%)"
               />
+              {isEditing && (
+                <Input
+                  type="number"
+                  value={content.skills?.abletonLive}
+                  onChange={(e) => handleInputChange('skills.abletonLive', parseInt(e.target.value))}
+                  style={{
+                    marginTop: "4px",
+                    width: "60px",
+                    backgroundColor: 'transparent',
+                    border: '1px dashed #f5a623'
+                  }}
+                />
+              )}
             </Col>
             <Col span={24}>
               <div
@@ -164,10 +349,10 @@ export const FeaturedProjectsSection: React.FC = () => {
                 }}
               >
                 <span>Logic Pro</span>
-                <span>88%</span>
+                <span>{content.skills?.logicPro || 88}%</span>
               </div>
               <Progress
-                percent={88}
+                percent={content.skills?.logicPro || 88}
                 showInfo={false}
                 strokeColor="linear-gradient(90deg, rgba(245,166,35,1) 0%, rgba(255,200,87,1) 100%)"
               />
@@ -226,9 +411,24 @@ export const FeaturedProjectsSection: React.FC = () => {
                       fontWeight: "bold",
                     }}
                   >
-                    85
+                    {content.languages?.english || 85}
                   </span>
                 </div>
+                {isEditing && (
+                  <Input
+                    type="number"
+                    value={content.languages?.english}
+                    onChange={(e) => handleInputChange('languages.english', parseInt(e.target.value))}
+                    style={{
+                      position: 'absolute',
+                      bottom: '-30px',
+                      right: '-10px',
+                      width: '40px',
+                      backgroundColor: 'transparent',
+                      border: '1px dashed #f5a623'
+                    }}
+                  />
+                )}
               </div>
               <div
                 style={{ marginTop: "8px", color: "#a9a9a9", fontSize: "12px" }}
@@ -280,9 +480,24 @@ export const FeaturedProjectsSection: React.FC = () => {
                       fontWeight: "bold",
                     }}
                   >
-                    100
+                    {content.languages?.vietnamese || 100}
                   </span>
                 </div>
+                {isEditing && (
+                  <Input
+                    type="number"
+                    value={content.languages?.vietnamese}
+                    onChange={(e) => handleInputChange('languages.vietnamese', parseInt(e.target.value))}
+                    style={{
+                      position: 'absolute',
+                      bottom: '-30px',
+                      right: '-10px',
+                      width: '40px',
+                      backgroundColor: 'transparent',
+                      border: '1px dashed #f5a623'
+                    }}
+                  />
+                )}
               </div>
               <div
                 style={{ marginTop: "8px", color: "#a9a9a9", fontSize: "12px" }}
@@ -330,9 +545,24 @@ export const FeaturedProjectsSection: React.FC = () => {
                       fontWeight: "bold",
                     }}
                   >
-                    75
+                    {content.languages?.daw || 75}
                   </span>
                 </div>
+                {isEditing && (
+                  <Input
+                    type="number"
+                    value={content.languages?.daw}
+                    onChange={(e) => handleInputChange('languages.daw', parseInt(e.target.value))}
+                    style={{
+                      position: 'absolute',
+                      bottom: '-30px',
+                      right: '-10px',
+                      width: '40px',
+                      backgroundColor: 'transparent',
+                      border: '1px dashed #f5a623'
+                    }}
+                  />
+                )}
               </div>
               <div
                 style={{ marginTop: "8px", color: "#a9a9a9", fontSize: "12px" }}
@@ -377,6 +607,50 @@ export const FeaturedProjectsSection: React.FC = () => {
           />
         </Col>
       </Row>
+    </div>
+  );
+};
+
+// Create an editable version of the component with withEditableSection HOC
+const EditableFeaturedProjectsSection = withEditableSection<FeaturedContent>(
+  FeaturedProjectsSectionContent,
+  'Featured Projects Section'
+);
+
+// Main component that provides default content
+export const FeaturedProjectsSection: React.FC = () => {
+  const defaultContent: FeaturedContent = {
+    name: "K'BRỲ",
+    title: "Chuyên viên Tổ chức, dàn dựng chương trình văn hóa, nghệ thuật",
+    location: "Ho Chi Minh City",
+    year: "2002",
+    electronic: "Electronic",
+    cinematic: "Cinematic",
+    skills: {
+      composition: 95,
+      mixing: 90,
+      mastering: 85,
+      abletonLive: 92,
+      logicPro: 88
+    },
+    languages: {
+      english: 85,
+      vietnamese: 100,
+      daw: 75
+    }
+  };
+
+  const handleSave = (content: FeaturedContent) => {
+    console.log('Saving content:', content);
+    // Here you would typically save the content to an API
+  };
+
+  return (
+    <div className="featured-projects-section">
+      <EditableFeaturedProjectsSection
+        defaultContent={defaultContent}
+        onSave={handleSave}
+      />
     </div>
   );
 };
