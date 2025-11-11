@@ -4,11 +4,14 @@ import {
   PlayCircleOutlined,
   YoutubeOutlined,
   FacebookOutlined,
+  CopyOutlined,
 } from "@ant-design/icons";
-import { Button, Col, Row, Input, Spin, message } from "antd";
-import { withEditableSection } from "../../../../components/withEditableSection";
+import { Button, Col, Row, Input, Spin } from "antd";
+import { useEdit } from "../../../../contexts/EditContextCore";
 import { useFeaturedProjects } from "../../../../hooks/useProjects";
 import type { Project } from "../../../../types/project";
+import { featuredContent as defaultFeaturedContent } from "../../../../data/featuredContent";
+import { saveToContentFile, downloadContentFile } from "../../../../services/contentFileService";
 import "./FeaturedProjectsSection.css";
 
 interface FeaturedContent {
@@ -23,16 +26,16 @@ interface FeaturedContent {
 }
 
 interface FeaturedProjectsSectionProps {
-  isEditing: boolean;
   content: FeaturedContent;
   onContentChange: (field: keyof FeaturedContent, value: string) => void;
 }
 
 const FeaturedProjectsSectionContent: React.FC<FeaturedProjectsSectionProps> = ({
-  isEditing,
   content,
   onContentChange,
 }) => {
+  const { isEditMode } = useEdit();
+  
   const handleInputChange = (
     key: keyof FeaturedContent,
     value: string
@@ -51,7 +54,7 @@ const FeaturedProjectsSectionContent: React.FC<FeaturedProjectsSectionProps> = (
               className="profile-image"
             />
             <div className="profile-name">
-              {isEditing ? (
+              {isEditMode ? (
                 <Input
                   value={content.name}
                   onChange={(e) => handleInputChange('name', e.target.value)}
@@ -61,7 +64,7 @@ const FeaturedProjectsSectionContent: React.FC<FeaturedProjectsSectionProps> = (
                 content.name || "K'BRỲ"
               )}
             </div>
-            {isEditing ? (
+            {isEditMode ? (
               <Input
                 value={content.title}
                 onChange={(e) => handleInputChange('title', e.target.value)}
@@ -96,7 +99,7 @@ const FeaturedProjectsSectionContent: React.FC<FeaturedProjectsSectionProps> = (
         {/* Social Media Links */}
         <Col span={24}>
           <div className="social-section-title">
-            {isEditing ? (
+            {isEditMode ? (
               <span style={{ color: '#eaeaea', fontSize: '14px', fontWeight: 'bold' }}>Social Media Links</span>
             ) : (
               <span style={{ color: '#eaeaea', fontSize: '14px', fontWeight: 'bold' }}>Connect With Me</span>
@@ -105,7 +108,7 @@ const FeaturedProjectsSectionContent: React.FC<FeaturedProjectsSectionProps> = (
           <Row gutter={[8, 8]} style={{ marginTop: '12px' }}>
             {/* YouTube Personal */}
             <Col span={12}>
-              {isEditing ? (
+              {isEditMode ? (
                 <div>
                   <div style={{ fontSize: '12px', color: '#a9a9a9', marginBottom: '4px' }}>YouTube Cá nhân</div>
                   <Input
@@ -133,7 +136,7 @@ const FeaturedProjectsSectionContent: React.FC<FeaturedProjectsSectionProps> = (
 
             {/* YouTube Band */}
             <Col span={12}>
-              {isEditing ? (
+              {isEditMode ? (
                 <div>
                   <div style={{ fontSize: '12px', color: '#a9a9a9', marginBottom: '4px' }}>YouTube Band</div>
                   <Input
@@ -161,7 +164,7 @@ const FeaturedProjectsSectionContent: React.FC<FeaturedProjectsSectionProps> = (
 
             {/* Facebook Personal */}
             <Col span={12}>
-              {isEditing ? (
+              {isEditMode ? (
                 <div>
                   <div style={{ fontSize: '12px', color: '#a9a9a9', marginBottom: '4px' }}>Facebook Cá nhân</div>
                   <Input
@@ -189,7 +192,7 @@ const FeaturedProjectsSectionContent: React.FC<FeaturedProjectsSectionProps> = (
 
             {/* Facebook Fanpage */}
             <Col span={12}>
-              {isEditing ? (
+              {isEditMode ? (
                 <div>
                   <div style={{ fontSize: '12px', color: '#a9a9a9', marginBottom: '4px' }}>Fanpage Band</div>
                   <Input
@@ -217,7 +220,7 @@ const FeaturedProjectsSectionContent: React.FC<FeaturedProjectsSectionProps> = (
 
             {/* Spotify */}
             <Col span={24}>
-              {isEditing ? (
+              {isEditMode ? (
                 <div>
                   <div style={{ fontSize: '12px', color: '#a9a9a9', marginBottom: '4px' }}>Spotify</div>
                   <Input
@@ -257,30 +260,19 @@ const FeaturedProjectsSectionContent: React.FC<FeaturedProjectsSectionProps> = (
   );
 };
 
-// Create an editable version of the component with withEditableSection HOC
-const EditableFeaturedProjectsSection = withEditableSection<FeaturedContent>(
-  FeaturedProjectsSectionContent,
-  'Featured Projects Section'
-);
+// No longer using withEditableSection HOC - now using EditContext directly
 
 // Main component that provides default content
 interface FeaturedProjectsSectionMainProps {
   defaultIsEditing?: boolean;
 }
 
-export const FeaturedProjectsSection: React.FC<FeaturedProjectsSectionMainProps> = ({
-  defaultIsEditing,
-}) => {
+export const FeaturedProjectsSection: React.FC<FeaturedProjectsSectionMainProps> = () => {
+  const { isEditMode } = useEdit();
   const { projects, loading } = useFeaturedProjects();
   const [content, setContent] = useState<FeaturedContent>({
-    name: "K'BRỲ",
-    title: "Chuyên viên Tổ chức, dàn dựng chương trình văn hóa, nghệ thuật",
-    featuredProjects: [],
-    youtubePersonal: "https://www.youtube.com/@b.k2541",
-    youtubeBand: "https://www.youtube.com/@noplaninmusic",
-    facebookPersonal: "https://www.facebook.com/bryfingerstyle",
-    facebookFanpage: "https://www.facebook.com/noplaninmusic/",
-    spotify: "https://open.spotify.com/artist/6D9IldP8aT38RwBsX2jvkg?si=urmw8W72RX2wPu3-m9DW_Q&nd=1&dlsi=68ca5ff1c27e4a50"
+    ...defaultFeaturedContent,
+    featuredProjects: []
   });
 
   // Update content when projects load
@@ -293,11 +285,23 @@ export const FeaturedProjectsSection: React.FC<FeaturedProjectsSectionMainProps>
     }
   }, [projects]);
 
-  const handleSave = (updatedContent: FeaturedContent) => {
-    console.log('Saving content:', updatedContent);
-    setContent(updatedContent);
-    message.success('Cập nhật thông tin thành công!');
-    // Here you would typically save the content to an API
+  const handleContentChange = (field: keyof FeaturedContent, value: string) => {
+    setContent(prev => ({
+      ...prev,
+      [field]: value
+    }));
+  };
+  
+  const handleSaveToFile = async () => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { featuredProjects: _, ...contentWithoutProjects } = content;
+    await saveToContentFile('featuredContent', contentWithoutProjects);
+  };
+
+  const handleDownload = () => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { featuredProjects: _, ...contentWithoutProjects } = content;
+    downloadContentFile('featuredContent', contentWithoutProjects);
   };
 
   if (loading) {
@@ -311,10 +315,43 @@ export const FeaturedProjectsSection: React.FC<FeaturedProjectsSectionMainProps>
   }
 
   return (
-    <EditableFeaturedProjectsSection
-      defaultContent={content}
-      onSave={handleSave}
-      defaultIsEditing={defaultIsEditing}
-    />
+    <div style={{ position: 'relative' }}>
+      <FeaturedProjectsSectionContent
+        content={content}
+        onContentChange={handleContentChange}
+      />
+      
+      {/* Save buttons when in edit mode */}
+      {isEditMode && (
+        <div style={{ 
+          position: 'fixed', 
+          bottom: 20, 
+          right: 20, 
+          zIndex: 1000,
+          display: 'flex',
+          gap: '8px'
+        }}>
+          <Button
+            type="primary"
+            icon={<CopyOutlined />}
+            onClick={handleSaveToFile}
+            size="small"
+            style={{
+              backgroundColor: '#52c41a',
+              borderColor: '#52c41a',
+            }}
+          >
+            Copy
+          </Button>
+          <Button
+            icon={<DownloadOutlined />}
+            onClick={handleDownload}
+            size="small"
+          >
+            Download
+          </Button>
+        </div>
+      )}
+    </div>
   );
 };
