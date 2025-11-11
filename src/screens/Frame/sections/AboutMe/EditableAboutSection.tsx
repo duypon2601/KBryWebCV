@@ -81,15 +81,15 @@ const EditableAboutSection: React.FC = (): JSX.Element => {
     <div style={{ width: "100%", position: "relative" }}>
       {renderEditControls()}
       
-      <Row style={{ opacity: 0.46, marginBottom: 40 }}>
+      <Row gutter={32} style={{ opacity: 0.46, marginBottom: 40 ,paddingTop: 30}}>
         <Col span={12}>
           <img
             style={{ width: "100%", height: "auto" }}
             alt="Profile"
-            src="https://placehold.co/520x334"
+            src="https://nismnfejbdwweiiyiyby.supabase.co/storage/v1/object/public/projectkbry/webImg/z7210579486606_6e975afb644a832b96083a65938d59d9.jpg"
           />
         </Col>
-        <Col span={12}>
+        <Col span={12} style={{ paddingLeft: 24 }}>
           <Title level={2} style={{ color: "#f5a623" }}>
             About Me
           </Title>

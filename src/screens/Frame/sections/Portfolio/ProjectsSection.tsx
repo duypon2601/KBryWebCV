@@ -200,28 +200,47 @@ const ProjectsSection: React.FC = () => {
                   <div
                     style={{
                       width: '100%',
-                      aspectRatio: '16 / 9',
-                      backgroundImage: `url(${project.img})`,
-                      backgroundSize: 'cover',
-                      backgroundPosition: 'center center',
-                      backgroundRepeat: 'no-repeat',
-                      position: 'relative',
+                      padding: '8px 8px 0 8px', // Tạo khoảng cách đều xung quanh
                     }}
                   >
-                    {isEditMode && (
+                    <div
+                      style={{
+                        width: '100%',
+                        paddingTop: '56.25%', // 16:9 aspect ratio
+                        position: 'relative',
+                        overflow: 'hidden',
+                        borderRadius: '12px', // Bo góc hình ảnh
+                      }}
+                    >
                       <div
                         style={{
                           position: 'absolute',
-                          top: 8,
-                          right: 8,
-                          backgroundColor: 'rgba(0,0,0,0.7)',
-                          borderRadius: '4px',
-                          padding: '4px 8px',
+                          top: 0,
+                          left: 0,
+                          width: '100%',
+                          height: '100%',
+                          backgroundImage: `url(${project.img})`,
+                          backgroundSize: 'cover',
+                          backgroundPosition: 'center',
+                          backgroundRepeat: 'no-repeat',
                         }}
                       >
-                        <EditOutlined style={{ color: '#f5a623' }} />
+                        {isEditMode && (
+                          <div
+                            style={{
+                              position: 'absolute',
+                              top: 8,
+                              right: 8,
+                              backgroundColor: 'rgba(0,0,0,0.7)',
+                              borderRadius: '4px',
+                              padding: '4px 8px',
+                            }}
+                          >
+                            <EditOutlined style={{ color: '#f5a623' }} />
+                          </div>
+                        )}
                       </div>
-                    )}
+                    </div>
                   </div>
                 }
                 style={{ backgroundColor: "#2c2c2c", borderRadius: "16px" }}

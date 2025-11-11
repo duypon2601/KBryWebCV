@@ -19,7 +19,7 @@ export interface WrappedComponentProps<C> {
 
 export function withEditableSection<C>(
   WrappedComponent: ComponentType<WrappedComponentProps<C>>,
-  sectionTitle: string
+  _sectionTitle: string
 ): FC<HocProps<C>> {
   return function EnhancedComponent(props: HocProps<C>) {
     const { defaultContent, defaultIsEditing = false, onSave, ...restProps } = props as HocProps<C> & Record<string, unknown>;

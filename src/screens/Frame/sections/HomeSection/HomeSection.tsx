@@ -9,13 +9,6 @@ import { useProjects } from "../../../../hooks/useProjects";
 import type { Project } from "../../../../types/project";
 
 // Define interfaces for type safety
-interface ProjectData {
-  title: string;
-  genre: string;
-  year: string;
-  imageUrl: string;
-}
-
 interface HomeContent {
   title: string;
   description: string;
