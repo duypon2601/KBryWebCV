@@ -83,7 +83,7 @@ const EditProjectModal: React.FC<EditProjectModalProps> = ({
       }
       
       const updatedProject: Project = {
-        id: project?.id || `project_${Date.now()}`,
+        id: project?.id || '', // Let database generate UUID for new projects
         title: values.title.trim(),
         genre: values.genre.trim(),
         time: values.time.trim(),

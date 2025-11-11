@@ -19,12 +19,6 @@ const PortfolioSection = (): React.ReactElement => {
     return ["All", ...uniqueGenres];
   }, [projects]);
 
-  // Filter projects by selected genre
-  const filteredProjects = useMemo(() => {
-    if (selectedGenre === "All") return projects;
-    return projects.filter(p => p.genre === selectedGenre);
-  }, [projects, selectedGenre]);
-
   useEffect(() => {
     Fancybox.bind("[data-fancybox=portfolio]", {
       groupAll: true,
@@ -33,7 +27,7 @@ const PortfolioSection = (): React.ReactElement => {
     return () => {
       Fancybox.destroy();
     };
-  }, [filteredProjects]);
+  }, []);
 
   if (loading) {
     return (
@@ -74,33 +68,6 @@ const PortfolioSection = (): React.ReactElement => {
           </Col>
         ))}
       </Row>
-
-      {/* Project display area */}
-      {projects.length > 0 && (
-        <Row justify="center" style={{ marginTop: 24, gap: 8 }} gutter={[8, 8]}>
-          {filteredProjects.map((project) => (
-            <Col key={project.id}>
-              <a
-                href={project.metadata?.video_url as string || project.image_url}
-                data-fancybox="portfolio"
-                aria-label={`Open ${project.title} video`}
-              >
-                <Button
-                  type="default"
-                  shape="round"
-                  style={{
-                    backgroundColor: "#2c2c2c",
-                    borderColor: "#2c2c2c",
-                    color: "#eaeaea",
-                  }}
-                >
-                  {project.title}
-                </Button>
-              </a>
-            </Col>
-          ))}
-        </Row>
-      )}
     </>
   );
 };

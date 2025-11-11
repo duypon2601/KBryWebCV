@@ -89,23 +89,36 @@ const HomeSectionContent: React.FC<HomeSectionContentProps> = ({
               width: "100%",
               maxWidth: 1200,
               margin: "0 auto",
-              padding: "0 1rem",
-              marginLeft: "300px", // Offset for sidebar
+              padding: "0 2rem",
+              marginLeft: "auto",
+              marginRight: "auto",
+              paddingLeft: "350px", // Offset for sidebar with extra padding
             }}
           >
             <div style={{
               width: "100%",
-              maxWidth: "800px",
+              maxWidth: "900px",
               margin: "0 auto",
-              textAlign: "center"
+              textAlign: "center",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center"
             }}>
               <Title
                 level={1}
-                style={{ color: "#eaeaea", textAlign: "center" }}
+                style={{ 
+                  color: "#eaeaea", 
+                  textAlign: "center",
+                  whiteSpace: "nowrap",
+                  fontSize: "clamp(1.2rem, 3vw, 2.5rem)",
+                  marginBottom: "1.5rem",
+                  width: "100%"
+                }}
               >
-                Sáng tạo cảm xúc{" "}
-                <span style={{ color: "#f5a623" }}>
-                  qua văn hóa, nghệ thuật
+                SÁNG TẠO CẢM XÚC{" "}
+                <span style={{ color: "#f5a623", paddingLeft: "8px" }}>
+                  QUA VĂN HÓA, NGHỆ THUẬT
                 </span>
               </Title>
               <Paragraph
@@ -115,7 +128,9 @@ const HomeSectionContent: React.FC<HomeSectionContentProps> = ({
                   fontSize: "1.25rem",
                   padding: "10px",
                   border: isEditMode ? "1px dashed #ccc" : "none",
-                  borderRadius: "4px"
+                  borderRadius: "4px",
+                  maxWidth: "700px",
+                  margin: "0 auto 2rem auto"
                 }}
               >
                 {isEditMode ? (
@@ -139,10 +154,11 @@ const HomeSectionContent: React.FC<HomeSectionContentProps> = ({
                 )}
               </Paragraph>
 
-              <Row justify="center" gutter={16}>
+              <Row justify="center" gutter={16} style={{ width: "100%", maxWidth: "600px", margin: "0 auto" }}>
                 <Col>
                   <Button
                     type="primary"
+                    size="large"
                     style={{
                       backgroundColor: "#f5a623",
                       borderColor: "#f5a623",
@@ -154,6 +170,7 @@ const HomeSectionContent: React.FC<HomeSectionContentProps> = ({
                 <Col>
                   <Button
                     type="default"
+                    size="large"
                     style={{ borderColor: "#f5a623", color: "#f5a623" }}
                   >
                     Liên hệ ngay
@@ -170,8 +187,9 @@ const HomeSectionContent: React.FC<HomeSectionContentProps> = ({
         }} />
 
         <div style={{ padding: "3rem 1rem", maxWidth: 1200, margin: "0 auto", width: "100%" }}>
-          <Row justify="center" gutter={16}>
-            <Col span={12}>
+          <Row justify="center" gutter={[32, 32]} align="middle">
+            <Col xs={24} sm={24} md={12} lg={12}>
+              <div style={{ padding: "0 2rem" }}>
               {isEditMode ? (
                 <Input
                   value={content.title}
@@ -207,8 +225,10 @@ const HomeSectionContent: React.FC<HomeSectionContentProps> = ({
                   {content.description}
                 </Paragraph>
               )}
+              </div>
             </Col>
-            <Col span={12}>
+            <Col xs={24} sm={24} md={12} lg={12}>
+              <div style={{ padding: "0 2rem" }}>
               <div
                 style={{
                   width: "100%",
@@ -231,6 +251,7 @@ const HomeSectionContent: React.FC<HomeSectionContentProps> = ({
                   }}
                 />
               </div>
+              </div>
             </Col>
           </Row>
         </div>
@@ -241,11 +262,11 @@ const HomeSectionContent: React.FC<HomeSectionContentProps> = ({
         }} />
 
         <div style={{ padding: "3rem 1rem", maxWidth: 1200, margin: "0 auto", width: "100%" }}>
-          <Title level={2} style={{ color: "#eaeaea", textAlign: "center", marginBottom: "2rem" }}>Featured Projects</Title>
+          <Title level={2} style={{ color: "#eaeaea", textAlign: "center", marginBottom: "3rem" }}>Featured Projects</Title>
           
-          <Row justify="center" gutter={16}>
+          <Row justify="center" gutter={[24, 24]}>
             {content.projects.slice(0, 3).map((project) => (
-              <Col span={8} key={project.id}>
+              <Col xs={24} sm={12} md={8} lg={8} key={project.id}>
                 <Card
                   hoverable
                   cover={
@@ -282,8 +303,8 @@ const HomeSectionContent: React.FC<HomeSectionContentProps> = ({
               </Col>
             ))}
           </Row>
-          <div style={{ textAlign: "center", marginTop: "2rem" }}>
-            <Button>View All Projects</Button>
+          <div style={{ textAlign: "center", marginTop: "3rem" }}>
+            <Button size="large">View All Projects</Button>
           </div>
         </div>
 
@@ -302,13 +323,15 @@ const HomeSectionContent: React.FC<HomeSectionContentProps> = ({
               color: "#a9a9a9",
               textAlign: "center",
               fontSize: "1.25rem",
+              maxWidth: "700px",
+              margin: "0 auto 2rem auto"
             }}
           >
             Có dự án âm nhạc thú vị? Hãy liên hệ để chúng ta cùng tạo ra những
             tác phẩm âm thanh độc đáo và đầy cảm xúc.
           </Paragraph>
           <div style={{ textAlign: "center", marginTop: "2rem" }}>
-            <Button>Start a Conversation</Button>
+            <Button size="large">Start a Conversation</Button>
           </div>
         </div>
       </div>
