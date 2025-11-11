@@ -2,6 +2,7 @@ import { Layout } from "antd";
 import type { JSX } from "react";
 
 import TimelineSection from "./TimelineSection";
+import "./Journey.css";
 
 const { Content } = Layout;
 
