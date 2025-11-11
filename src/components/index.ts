@@ -5,3 +5,4 @@ export default {
 };
 
 export { TestSupabaseConnection } from './TestSupabaseConnection';
+export { default as Footer } from './Footer';

@@ -1,124 +1,77 @@
 import React, { useState, useEffect } from "react";
 import {
-  CalendarOutlined,
   DownloadOutlined,
-  EnvironmentOutlined,
   PlayCircleOutlined,
-  SoundOutlined,
-  VideoCameraOutlined,
+  YoutubeOutlined,
+  FacebookOutlined,
+  CopyOutlined,
 } from "@ant-design/icons";
-import { Button, Col, Progress, Row, Input, Spin, message } from "antd";
-import { withEditableSection } from "../../../../components/withEditableSection";
+import { Button, Col, Row, Input, Spin } from "antd";
+import { useEdit } from "../../../../contexts/EditContextCore";
 import { useFeaturedProjects } from "../../../../hooks/useProjects";
 import type { Project } from "../../../../types/project";
+import { featuredContent as defaultFeaturedContent } from "../../../../data/featuredContent";
+import { saveToContentFile, downloadContentFile } from "../../../../services/contentFileService";
+import "./FeaturedProjectsSection.css";
 
 interface FeaturedContent {
   name: string;
   title: string;
-  location: string;
-  year: string;
-  electronic: string;
-  cinematic: string;
-  skills: {
-    composition: number;
-    mixing: number;
-    mastering: number;
-    abletonLive: number;
-    logicPro: number;
-  };
-  languages: {
-    english: number;
-    vietnamese: number;
-    daw: number;
-  };
   featuredProjects?: Project[];  // Add projects from database
+  youtubePersonal?: string;
+  youtubeBand?: string;
+  facebookPersonal?: string;
+  facebookFanpage?: string;
+  spotify?: string;
 }
 
 interface FeaturedProjectsSectionProps {
-  isEditing: boolean;
   content: FeaturedContent;
-  onContentChange: (field: keyof FeaturedContent, value: any) => void;
+  onContentChange: (field: keyof FeaturedContent, value: string) => void;
 }
 
 const FeaturedProjectsSectionContent: React.FC<FeaturedProjectsSectionProps> = ({
-  isEditing,
   content,
   onContentChange,
 }) => {
+  const { isEditMode } = useEdit();
+  
   const handleInputChange = (
-    key: keyof FeaturedContent | `skills.${keyof FeaturedContent['skills']}` | `languages.${keyof FeaturedContent['languages']}`,
-    value: string | number
+    key: keyof FeaturedContent,
+    value: string
   ) => {
-    if (key.includes('.')) {
-      const [section, field] = key.split('.');
-      onContentChange(section as keyof FeaturedContent, {
-        ...content[section as keyof Pick<FeaturedContent, 'skills' | 'languages'>],
-        [field]: value
-      });
-    } else {
-      onContentChange(key as keyof FeaturedContent, value.toString());
-    }
+    onContentChange(key, value);
   };
 
   return (
-    <div className="bg-[#151515] border-r border-[#2d2d2d] w-full overflow-visible pt-4 px-4 md:pt-6 md:px-6 box-border">
+    <div className="featured-projects-section">
       <Row gutter={[16, 16]} style={{ marginLeft: 0, marginRight: 0, marginTop: "1rem" }}>
         <Col span={24}>
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              flexDirection: "column",
-            }}
-          >
+          <div className="profile-container">
             <img
               alt="Profile"
               src="https://c.animaapp.com/BleKbnjN/img/untitled-1@2x.png"
-              style={{
-                width: "96px",
-                height: "96px",
-                borderRadius: "50%",
-                boxShadow: "0px 0px 20px #f5a6234c",
-              }}
+              className="profile-image"
             />
-            <div
-              style={{
-                marginTop: "16px",
-                color: "#eaeaea",
-                fontSize: "20px",
-                fontWeight: "bold",
-              }}
-            >
-              {isEditing ? (
+            <div className="profile-name">
+              {isEditMode ? (
                 <Input
                   value={content.name}
                   onChange={(e) => handleInputChange('name', e.target.value)}
-                  style={{
-                    textAlign: 'center',
-                    color: '#eaeaea',
-                    backgroundColor: 'transparent',
-                    border: '1px dashed #f5a623'
-                  }}
+                  className="editable-input"
                 />
               ) : (
                 content.name || "K'BRỲ"
               )}
             </div>
-            {isEditing ? (
+            {isEditMode ? (
               <Input
                 value={content.title}
                 onChange={(e) => handleInputChange('title', e.target.value)}
-                style={{
-                  color: "#a9a9a9",
-                  fontSize: "14px",
-                  textAlign: 'center',
-                  backgroundColor: 'transparent',
-                  border: '1px dashed #f5a623'
-                }}
+                className="editable-input-title"
               />
             ) : (
-              <p style={{ color: "#a9a9a9", fontSize: "14px" }}>
+              <p className="profile-title">
                 {content.title || "Chuyên viên Tổ chức, dàn dựng chương trình văn hóa, nghệ thuật"}
               </p>
             )}
@@ -126,486 +79,180 @@ const FeaturedProjectsSectionContent: React.FC<FeaturedProjectsSectionProps> = (
         </Col>
 
         <Col span={24}>
-          <Row gutter={[8, 8]} style={{ marginLeft: 0, marginRight: 0 }}>
-            <Col span={24}>
-              <EnvironmentOutlined style={{ color: "#a9a9a9" }} />
-              {isEditing ? (
-                <Input
-                  value={content.location}
-                  onChange={(e) => handleInputChange('location', e.target.value)}
-                  style={{
-                    marginLeft: "8px",
-                    color: "#a9a9a9",
-                    backgroundColor: 'transparent',
-                    border: '1px dashed #f5a623',
-                    width: 'calc(100% - 24px)'
-                  }}
-                />
-              ) : (
-                <span style={{ marginLeft: "8px", color: "#a9a9a9" }}>
-                  {content.location || "Ho Chi Minh City"}
-                </span>
-              )}
-            </Col>
-            <Col span={24}>
-              <CalendarOutlined style={{ color: "#a9a9a9" }} />
-              {isEditing ? (
-                <Input
-                  value={content.year}
-                  onChange={(e) => handleInputChange('year', e.target.value)}
-                  style={{
-                    marginLeft: "8px",
-                    color: "#a9a9a9",
-                    backgroundColor: 'transparent',
-                    border: '1px dashed #f5a623',
-                    width: 'calc(100% - 24px)'
-                  }}
-                />
-              ) : (
-                <span style={{ marginLeft: "8px", color: "#a9a9a9" }}>
-                  {content.year || "2002"}
-                </span>
-              )}
-            </Col>
-            <Col span={24}>
-              <SoundOutlined style={{ color: "#a9a9a9" }} />
-              {isEditing ? (
-                <Input
-                  value={content.electronic}
-                  onChange={(e) => handleInputChange('electronic', e.target.value)}
-                  style={{
-                    marginLeft: "8px",
-                    color: "#a9a9a9",
-                    backgroundColor: 'transparent',
-                    border: '1px dashed #f5a623',
-                    width: 'calc(100% - 24px)'
-                  }}
-                />
-              ) : (
-                <span style={{ marginLeft: "8px", color: "#a9a9a9" }}>
-                  {content.electronic || "Electronic"}
-                </span>
-              )}
-            </Col>
-            <Col span={24}>
-              <VideoCameraOutlined style={{ color: "#a9a9a9" }} />
-              {isEditing ? (
-                <Input
-                  value={content.cinematic}
-                  onChange={(e) => handleInputChange('cinematic', e.target.value)}
-                  style={{
-                    marginLeft: "8px",
-                    color: "#a9a9a9",
-                    backgroundColor: 'transparent',
-                    border: '1px dashed #f5a623',
-                    width: 'calc(100% - 24px)'
-                  }}
-                />
-              ) : (
-                <span style={{ marginLeft: "8px", color: "#a9a9a9" }}>
-                  {content.cinematic || "Cinematic"}
-                </span>
-              )}
-            </Col>
-          </Row>
-        </Col>
-
-        <Col span={24}>
-          <div
-            style={{ color: "#eaeaea", fontSize: "14px", fontWeight: "bold" }}
-          >
-            Skills
-          </div>
-          <Row gutter={[8, 8]} style={{ marginTop: "8px", marginLeft: 0, marginRight: 0 }}>
-            <Col span={24}>
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  color: "#a9a9a9",
-                  fontSize: "12px",
-                }}
-              >
-                <span>Composition</span>
-                <span>{content.skills?.composition || 95}%</span>
-              </div>
-              <Progress
-                percent={content.skills?.composition || 95}
-                showInfo={false}
-                strokeColor="linear-gradient(90deg, rgba(245,166,35,1) 0%, rgba(255,200,87,1) 100%)"
-              />
-              {isEditing && (
-                <Input
-                  type="number"
-                  value={content.skills?.composition}
-                  onChange={(e) => handleInputChange('skills.composition', parseInt(e.target.value))}
-                  style={{
-                    marginTop: "4px",
-                    width: "60px",
-                    backgroundColor: 'transparent',
-                    border: '1px dashed #f5a623'
-                  }}
-                />
-              )}
-            </Col>
-            <Col span={24}>
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  color: "#a9a9a9",
-                  fontSize: "12px",
-                }}
-              >
-                <span>Mixing</span>
-                <span>{content.skills?.mixing || 90}%</span>
-              </div>
-              <Progress
-                percent={content.skills?.mixing || 90}
-                showInfo={false}
-                strokeColor="linear-gradient(90deg, rgba(245,166,35,1) 0%, rgba(255,200,87,1) 100%)"
-              />
-              {isEditing && (
-                <Input
-                  type="number"
-                  value={content.skills?.mixing}
-                  onChange={(e) => handleInputChange('skills.mixing', parseInt(e.target.value))}
-                  style={{
-                    marginTop: "4px",
-                    width: "60px",
-                    backgroundColor: 'transparent',
-                    border: '1px dashed #f5a623'
-                  }}
-                />
-              )}
-            </Col>
-            <Col span={24}>
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  color: "#a9a9a9",
-                  fontSize: "12px",
-                }}
-              >
-                <span>Mastering</span>
-                <span>{content.skills?.mastering || 85}%</span>
-              </div>
-              <Progress
-                percent={content.skills?.mastering || 85}
-                showInfo={false}
-                strokeColor="linear-gradient(90deg, rgba(245,166,35,1) 0%, rgba(255,200,87,1) 100%)"
-              />
-              {isEditing && (
-                <Input
-                  type="number" 
-                  value={content.skills?.mastering}
-                  onChange={(e) => handleInputChange('skills.mastering', parseInt(e.target.value))}
-                  style={{
-                    marginTop: "4px",
-                    width: "60px",
-                    backgroundColor: 'transparent',
-                    border: '1px dashed #f5a623'
-                  }}
-                />
-              )}
-            </Col>
-            <Col span={24}>
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  color: "#a9a9a9",
-                  fontSize: "12px",
-                }}
-              >
-                <span>Ableton Live</span>
-                <span>{content.skills?.abletonLive || 92}%</span>
-              </div>
-              <Progress
-                percent={content.skills?.abletonLive || 92}
-                showInfo={false}
-                strokeColor="linear-gradient(90deg, rgba(245,166,35,1) 0%, rgba(255,200,87,1) 100%)"
-              />
-              {isEditing && (
-                <Input
-                  type="number"
-                  value={content.skills?.abletonLive}
-                  onChange={(e) => handleInputChange('skills.abletonLive', parseInt(e.target.value))}
-                  style={{
-                    marginTop: "4px",
-                    width: "60px",
-                    backgroundColor: 'transparent',
-                    border: '1px dashed #f5a623'
-                  }}
-                />
-              )}
-            </Col>
-            <Col span={24}>
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  color: "#a9a9a9",
-                  fontSize: "12px",
-                }}
-              >
-                <span>Logic Pro</span>
-                <span>{content.skills?.logicPro || 88}%</span>
-              </div>
-              <Progress
-                percent={content.skills?.logicPro || 88}
-                showInfo={false}
-                strokeColor="linear-gradient(90deg, rgba(245,166,35,1) 0%, rgba(255,200,87,1) 100%)"
-              />
-            </Col>
-          </Row>
-        </Col>
-
-        <Col span={24}>
-          <div
-            style={{ color: "#eaeaea", fontSize: "14px", fontWeight: "bold" }}
-          >
-            Languages & Software
-          </div>
-          <Row gutter={[16, 16]} style={{ marginTop: "8px", marginLeft: 0, marginRight: 0 }}>
-            <Col span={8} style={{ textAlign: "center" }}>
-              <div style={{ position: "relative", display: "inline-block" }}>
-                <div
-                  style={{
-                    width: "48px",
-                    height: "48px",
-                    backgroundColor: "#2d2d2d",
-                    borderRadius: "50%",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                  }}
-                >
-                  <span
-                    style={{
-                      color: "#f5a623",
-                      fontSize: "12px",
-                      fontWeight: "bold",
-                    }}
-                  >
-                    EN
-                  </span>
-                </div>
-                <div
-                  style={{
-                    width: "20px",
-                    height: "20px",
-                    backgroundColor: "#f5a623",
-                    borderRadius: "50%",
-                    position: "absolute",
-                    bottom: "-10px",
-                    right: "-10px",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                  }}
-                >
-                  <span
-                    style={{
-                      color: "#1e1e1e",
-                      fontSize: "12px",
-                      fontWeight: "bold",
-                    }}
-                  >
-                    {content.languages?.english || 85}
-                  </span>
-                </div>
-                {isEditing && (
-                  <Input
-                    type="number"
-                    value={content.languages?.english}
-                    onChange={(e) => handleInputChange('languages.english', parseInt(e.target.value))}
-                    style={{
-                      position: 'absolute',
-                      bottom: '-30px',
-                      right: '-10px',
-                      width: '40px',
-                      backgroundColor: 'transparent',
-                      border: '1px dashed #f5a623'
-                    }}
-                  />
-                )}
-              </div>
-              <div
-                style={{ marginTop: "8px", color: "#a9a9a9", fontSize: "12px" }}
-              >
-                English
-              </div>
-            </Col>
-            <Col span={8} style={{ textAlign: "center" }}>
-              <div style={{ position: "relative", display: "inline-block" }}>
-                <div
-                  style={{
-                    width: "48px",
-                    height: "48px",
-                    backgroundColor: "#2d2d2d",
-                    borderRadius: "50%",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                  }}
-                >
-                  <span
-                    style={{
-                      color: "#f5a623",
-                      fontSize: "12px",
-                      fontWeight: "bold",
-                    }}
-                  >
-                    VN
-                  </span>
-                </div>
-                <div
-                  style={{
-                    width: "20px",
-                    height: "20px",
-                    backgroundColor: "#f5a623",
-                    borderRadius: "50%",
-                    position: "absolute",
-                    bottom: "-10px",
-                    right: "-10px",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                  }}
-                >
-                  <span
-                    style={{
-                      color: "#1e1e1e",
-                      fontSize: "12px",
-                      fontWeight: "bold",
-                    }}
-                  >
-                    {content.languages?.vietnamese || 100}
-                  </span>
-                </div>
-                {isEditing && (
-                  <Input
-                    type="number"
-                    value={content.languages?.vietnamese}
-                    onChange={(e) => handleInputChange('languages.vietnamese', parseInt(e.target.value))}
-                    style={{
-                      position: 'absolute',
-                      bottom: '-30px',
-                      right: '-10px',
-                      width: '40px',
-                      backgroundColor: 'transparent',
-                      border: '1px dashed #f5a623'
-                    }}
-                  />
-                )}
-              </div>
-              <div
-                style={{ marginTop: "8px", color: "#a9a9a9", fontSize: "12px" }}
-              >
-                Vietnamese
-              </div>
-            </Col>
-            <Col span={8} style={{ textAlign: "center" }}>
-              <div style={{ position: "relative", display: "inline-block" }}>
-                <div
-                  style={{
-                    width: "48px",
-                    height: "48px",
-                    backgroundColor: "#2d2d2d",
-                    borderRadius: "50%",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                  }}
-                >
-                  <img
-                    src="https://c.animaapp.com/BleKbnjN/img/i.svg"
-                    alt="DAW"
-                    style={{ width: "20px", height: "20px" }}
-                  />
-                </div>
-                <div
-                  style={{
-                    width: "20px",
-                    height: "20px",
-                    backgroundColor: "#f5a623",
-                    borderRadius: "50%",
-                    position: "absolute",
-                    bottom: "-10px",
-                    right: "-10px",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                  }}
-                >
-                  <span
-                    style={{
-                      color: "#1e1e1e",
-                      fontSize: "12px",
-                      fontWeight: "bold",
-                    }}
-                  >
-                    {content.languages?.daw || 75}
-                  </span>
-                </div>
-                {isEditing && (
-                  <Input
-                    type="number"
-                    value={content.languages?.daw}
-                    onChange={(e) => handleInputChange('languages.daw', parseInt(e.target.value))}
-                    style={{
-                      position: 'absolute',
-                      bottom: '-30px',
-                      right: '-10px',
-                      width: '40px',
-                      backgroundColor: 'transparent',
-                      border: '1px dashed #f5a623'
-                    }}
-                  />
-                )}
-              </div>
-              <div
-                style={{ marginTop: "8px", color: "#a9a9a9", fontSize: "12px" }}
-              >
-                DAW
-              </div>
-            </Col>
-          </Row>
-        </Col>
-
-        <Col span={24}>
           <Button
             type="primary"
             icon={<PlayCircleOutlined />}
             block
-            style={{
-              backgroundColor: "#f5a623",
-              borderColor: "#f5a623",
-              color: "#1e1e1e",
-            }}
+            className="btn-primary"
           >
             Listen to My Demos
           </Button>
           <Button
             icon={<DownloadOutlined />}
             block
-            style={{
-              marginTop: "16px",
-              borderColor: "#2d2d2d",
-              color: "#eaeaea",
-            }}
+            className="btn-secondary"
           >
             Download Portfolio
           </Button>
+        </Col>
+
+        {/* Social Media Links */}
+        <Col span={24}>
+          <div className="social-section-title">
+            {isEditMode ? (
+              <span style={{ color: '#eaeaea', fontSize: '14px', fontWeight: 'bold' }}>Social Media Links</span>
+            ) : (
+              <span style={{ color: '#eaeaea', fontSize: '14px', fontWeight: 'bold' }}>Connect With Me</span>
+            )}
+          </div>
+          <Row gutter={[8, 8]} style={{ marginTop: '12px' }}>
+            {/* YouTube Personal */}
+            <Col span={12}>
+              {isEditMode ? (
+                <div>
+                  <div style={{ fontSize: '12px', color: '#a9a9a9', marginBottom: '4px' }}>YouTube Cá nhân</div>
+                  <Input
+                    value={content.youtubePersonal}
+                    onChange={(e) => handleInputChange('youtubePersonal', e.target.value)}
+                    placeholder="YouTube URL"
+                    className="social-input"
+                  />
+                </div>
+              ) : (
+                content.youtubePersonal && (
+                  <a href={content.youtubePersonal} target="_blank" rel="noopener noreferrer">
+                    <Button
+                      icon={<YoutubeOutlined />}
+                      block
+                      className="btn-youtube"
+                      title="YouTube Cá nhân"
+                    >
+                      YT
+                    </Button>
+                  </a>
+                )
+              )}
+            </Col>
+
+            {/* YouTube Band */}
+            <Col span={12}>
+              {isEditMode ? (
+                <div>
+                  <div style={{ fontSize: '12px', color: '#a9a9a9', marginBottom: '4px' }}>YouTube Band</div>
+                  <Input
+                    value={content.youtubeBand}
+                    onChange={(e) => handleInputChange('youtubeBand', e.target.value)}
+                    placeholder="YouTube URL"
+                    className="social-input"
+                  />
+                </div>
+              ) : (
+                content.youtubeBand && (
+                  <a href={content.youtubeBand} target="_blank" rel="noopener noreferrer">
+                    <Button
+                      icon={<YoutubeOutlined />}
+                      block
+                      className="btn-youtube-band"
+                      title="YouTube Band"
+                    >
+                      Band
+                    </Button>
+                  </a>
+                )
+              )}
+            </Col>
+
+            {/* Facebook Personal */}
+            <Col span={12}>
+              {isEditMode ? (
+                <div>
+                  <div style={{ fontSize: '12px', color: '#a9a9a9', marginBottom: '4px' }}>Facebook Cá nhân</div>
+                  <Input
+                    value={content.facebookPersonal}
+                    onChange={(e) => handleInputChange('facebookPersonal', e.target.value)}
+                    placeholder="Facebook URL"
+                    className="social-input"
+                  />
+                </div>
+              ) : (
+                content.facebookPersonal && (
+                  <a href={content.facebookPersonal} target="_blank" rel="noopener noreferrer">
+                    <Button
+                      icon={<FacebookOutlined />}
+                      block
+                      className="btn-facebook"
+                      title="Facebook Cá nhân"
+                    >
+                      FB
+                    </Button>
+                  </a>
+                )
+              )}
+            </Col>
+
+            {/* Facebook Fanpage */}
+            <Col span={12}>
+              {isEditMode ? (
+                <div>
+                  <div style={{ fontSize: '12px', color: '#a9a9a9', marginBottom: '4px' }}>Fanpage Band</div>
+                  <Input
+                    value={content.facebookFanpage}
+                    onChange={(e) => handleInputChange('facebookFanpage', e.target.value)}
+                    placeholder="Fanpage URL"
+                    className="social-input"
+                  />
+                </div>
+              ) : (
+                content.facebookFanpage && (
+                  <a href={content.facebookFanpage} target="_blank" rel="noopener noreferrer">
+                    <Button
+                      icon={<FacebookOutlined />}
+                      block
+                      className="btn-facebook-fanpage"
+                      title="Fanpage Band"
+                    >
+                      Page
+                    </Button>
+                  </a>
+                )
+              )}
+            </Col>
+
+            {/* Spotify */}
+            <Col span={24}>
+              {isEditMode ? (
+                <div>
+                  <div style={{ fontSize: '12px', color: '#a9a9a9', marginBottom: '4px' }}>Spotify</div>
+                  <Input
+                    value={content.spotify}
+                    onChange={(e) => handleInputChange('spotify', e.target.value)}
+                    placeholder="Spotify URL"
+                    className="social-input"
+                  />
+                </div>
+              ) : (
+                content.spotify && (
+                  <a href={content.spotify} target="_blank" rel="noopener noreferrer">
+                    <Button
+                      icon={<svg viewBox="0 0 24 24" width="1em" height="1em" fill="currentColor"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>}
+                      block
+                      className="btn-spotify"
+                      title="Spotify"
+                    >
+                      Spotify
+                    </Button>
+                  </a>
+                )
+              )}
+            </Col>
+          </Row>
         </Col>
 
         <Col span={24}>
           <img
             src="https://c.animaapp.com/BleKbnjN/img/div.svg"
             alt="Divider"
-            style={{ width: "100%", marginTop: "16px" }}
+            className="divider-image"
           />
         </Col>
       </Row>
@@ -613,40 +260,18 @@ const FeaturedProjectsSectionContent: React.FC<FeaturedProjectsSectionProps> = (
   );
 };
 
-// Create an editable version of the component with withEditableSection HOC
-const EditableFeaturedProjectsSection = withEditableSection<FeaturedContent>(
-  FeaturedProjectsSectionContent,
-  'Featured Projects Section'
-);
+// No longer using withEditableSection HOC - now using EditContext directly
 
 // Main component that provides default content
 interface FeaturedProjectsSectionMainProps {
   defaultIsEditing?: boolean;
 }
 
-export const FeaturedProjectsSection: React.FC<FeaturedProjectsSectionMainProps> = ({
-  defaultIsEditing,
-}) => {
+export const FeaturedProjectsSection: React.FC<FeaturedProjectsSectionMainProps> = () => {
+  const { isEditMode } = useEdit();
   const { projects, loading } = useFeaturedProjects();
   const [content, setContent] = useState<FeaturedContent>({
-    name: "K'BRỲ",
-    title: "Chuyên viên Tổ chức, dàn dựng chương trình văn hóa, nghệ thuật",
-    location: "Ho Chi Minh City",
-    year: "2002",
-    electronic: "Electronic",
-    cinematic: "Cinematic",
-    skills: {
-      composition: 95,
-      mixing: 90,
-      mastering: 85,
-      abletonLive: 92,
-      logicPro: 88
-    },
-    languages: {
-      english: 85,
-      vietnamese: 100,
-      daw: 75
-    },
+    ...defaultFeaturedContent,
     featuredProjects: []
   });
 
@@ -660,17 +285,29 @@ export const FeaturedProjectsSection: React.FC<FeaturedProjectsSectionMainProps>
     }
   }, [projects]);
 
-  const handleSave = (updatedContent: FeaturedContent) => {
-    console.log('Saving content:', updatedContent);
-    setContent(updatedContent);
-    message.success('Cập nhật thông tin thành công!');
-    // Here you would typically save the content to an API
+  const handleContentChange = (field: keyof FeaturedContent, value: string) => {
+    setContent(prev => ({
+      ...prev,
+      [field]: value
+    }));
+  };
+  
+  const handleSaveToFile = async () => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { featuredProjects: _, ...contentWithoutProjects } = content;
+    await saveToContentFile('featuredContent', contentWithoutProjects);
+  };
+
+  const handleDownload = () => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { featuredProjects: _, ...contentWithoutProjects } = content;
+    downloadContentFile('featuredContent', contentWithoutProjects);
   };
 
   if (loading) {
     return (
-      <div className="bg-[#151515] border-r border-[#2d2d2d] w-full overflow-visible pt-4 px-4 md:pt-6 md:px-6 box-border">
-        <div style={{ display: 'flex', justifyContent: 'center', padding: '48px' }}>
+      <div className="featured-projects-section">
+        <div className="loading-container">
           <Spin size="large" />
         </div>
       </div>
@@ -678,12 +315,43 @@ export const FeaturedProjectsSection: React.FC<FeaturedProjectsSectionMainProps>
   }
 
   return (
-    <div className="featured-projects-section">
-      <EditableFeaturedProjectsSection
-        defaultContent={content}
-        onSave={handleSave}
-        defaultIsEditing={defaultIsEditing}
+    <div style={{ position: 'relative' }}>
+      <FeaturedProjectsSectionContent
+        content={content}
+        onContentChange={handleContentChange}
       />
+      
+      {/* Save buttons when in edit mode */}
+      {isEditMode && (
+        <div style={{ 
+          position: 'fixed', 
+          bottom: 20, 
+          right: 20, 
+          zIndex: 1000,
+          display: 'flex',
+          gap: '8px'
+        }}>
+          <Button
+            type="primary"
+            icon={<CopyOutlined />}
+            onClick={handleSaveToFile}
+            size="small"
+            style={{
+              backgroundColor: '#52c41a',
+              borderColor: '#52c41a',
+            }}
+          >
+            Copy
+          </Button>
+          <Button
+            icon={<DownloadOutlined />}
+            onClick={handleDownload}
+            size="small"
+          >
+            Download
+          </Button>
+        </div>
+      )}
     </div>
   );
 };

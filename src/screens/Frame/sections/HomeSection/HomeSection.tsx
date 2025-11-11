@@ -1,12 +1,13 @@
 import { Button, Card, Col, Divider, Input, Row, Typography, Spin } from "antd";
-import AutoAdvanceOnScroll from "../../../../components/AutoAdvanceOnScroll/AutoAdvanceOnScroll";
+import { DownloadOutlined, CopyOutlined } from "@ant-design/icons";
 import { FeaturedProjectsSection } from "../FeaturedProjectsSection/FeaturedProjectsSection";
-import { withEditableSection } from "../../../../components/withEditableSection";
-import type { WrappedComponentProps } from "../../../../components/withEditableSection";
 import React, { useState, useEffect } from 'react';
 import type { FC } from 'react';
 import { useProjects } from "../../../../hooks/useProjects";
 import type { Project } from "../../../../types/project";
+import { useEdit } from "../../../../contexts/EditContextCore";
+import { homeContent as defaultHomeContent } from "../../../../data/homeContent";
+import { saveToContentFile, downloadContentFile } from "../../../../services/contentFileService";
 
 // Define interfaces for type safety
 interface HomeContent {
@@ -17,7 +18,6 @@ interface HomeContent {
 }
 
 interface HomeSectionContentProps {
-  isEditing: boolean;
   content: HomeContent;
   onContentChange: (field: keyof HomeContent, value: string | Project[]) => void;
 }
@@ -32,19 +32,16 @@ const { Title, Paragraph } = Typography;
 
 // Main component implementation
 const HomeSectionContent: React.FC<HomeSectionContentProps> = ({
-  isEditing,
   content,
   onContentChange
 }: HomeSectionContentProps) => {
+  const { isEditMode } = useEdit();
+  
   return (
-    <div style={{ width: "100%", position: "relative", display: "flex", minHeight: "100vh" }}>
-      {/* Sidebar with Featured Projects */}
-      <div className="w-[300px] flex-none bg-[#151515] border-r border-[#2d2d2d] overflow-visible">
-        <FeaturedProjectsSection defaultIsEditing={isEditing} />
-      </div>
-
+    <div style={{ width: "100%", position: "relative" }}>
       {/* Main Content */}
-      <div className="flex-1 min-w-0 max-w-full overflow-x-hidden">
+      <div style={{ width: "100%" }}>
+        {/* Hero Section with Sidebar */}
         <div
           style={{
             width: "100%",
@@ -58,6 +55,16 @@ const HomeSectionContent: React.FC<HomeSectionContentProps> = ({
             padding: "2rem 1rem",
           }}
         >
+          {/* Sidebar with Featured Projects - only in hero */}
+          <div className="w-[300px] flex-none bg-[#151515] border-r border-[#2d2d2d]" style={{ 
+            position: "absolute", 
+            left: 0, 
+            top: 0, 
+            height: "100%",
+            overflowY: "auto"
+          }}>
+            <FeaturedProjectsSection />
+          </div>
           <div
             style={{
               position: "fixed",
@@ -72,6 +79,7 @@ const HomeSectionContent: React.FC<HomeSectionContentProps> = ({
               backgroundRepeat: "no-repeat",
               opacity: 0.1,
               zIndex: 0,
+              pointerEvents: "none",
             }}
           />
           <div
@@ -82,6 +90,7 @@ const HomeSectionContent: React.FC<HomeSectionContentProps> = ({
               maxWidth: 1200,
               margin: "0 auto",
               padding: "0 1rem",
+              marginLeft: "300px", // Offset for sidebar
             }}
           >
             <div style={{
@@ -105,11 +114,11 @@ const HomeSectionContent: React.FC<HomeSectionContentProps> = ({
                   textAlign: "center",
                   fontSize: "1.25rem",
                   padding: "10px",
-                  border: isEditing ? "1px dashed #ccc" : "none",
+                  border: isEditMode ? "1px dashed #ccc" : "none",
                   borderRadius: "4px"
                 }}
               >
-                {isEditing ? (
+                {isEditMode ? (
                   <Input.TextArea
                     value={content.introduction}
                     onChange={(e) => onContentChange('introduction', e.target.value)}
@@ -163,7 +172,7 @@ const HomeSectionContent: React.FC<HomeSectionContentProps> = ({
         <div style={{ padding: "3rem 1rem", maxWidth: 1200, margin: "0 auto", width: "100%" }}>
           <Row justify="center" gutter={16}>
             <Col span={12}>
-              {isEditing ? (
+              {isEditMode ? (
                 <Input
                   value={content.title}
                   onChange={(e) => onContentChange('title', e.target.value)}
@@ -181,7 +190,7 @@ const HomeSectionContent: React.FC<HomeSectionContentProps> = ({
                   {content.title}
                 </Title>
               )}
-              {isEditing ? (
+              {isEditMode ? (
                 <Input.TextArea
                   value={content.description}
                   onChange={(e) => onContentChange('description', e.target.value)}
@@ -303,32 +312,25 @@ const HomeSectionContent: React.FC<HomeSectionContentProps> = ({
           </div>
         </div>
       </div>
-      <AutoAdvanceOnScroll threshold={0.95} />
     </div>
   );
 };
 
 // Create the editable version of the component
-const EditableHomeSection = withEditableSection<HomeContent>(
-  HomeSectionContent as React.FC<WrappedComponentProps<HomeContent>>,
-  'Home Section'
-);
+// No longer using withEditableSection HOC - now using EditContext directly
 
 // Main component that provides default content
 interface HomeSectionProps {
   defaultIsEditing?: boolean;
 }
 
-const HomeSection: FC<HomeSectionProps> = ({ defaultIsEditing }) => {
+const HomeSection: FC<HomeSectionProps> = () => {
+  const { isEditMode } = useEdit();
   // Lấy tất cả published projects thay vì chỉ featured
   const { projects, loading } = useProjects({ is_published: true });
   
   const [content, setContent] = useState<HomeContent>({
-    title: 'Về Tôi',
-    description: `Tôi là một chuyên viên tổ chức và dàn dựng chương trình văn hóa – nghệ thuật, 
-    với hơn 5 năm gắn bó cùng sân khấu và không gian sáng tạo. Tôi tin rằng mỗi sự kiện là một câu chuyện, 
-    và nhiệm vụ của tôi là kể nó bằng cảm xúc, sự chỉn chu và tinh thần "trách nhiệm – thân thiện – tôn trọng".`,
-    introduction: 'Mỗi tác phẩm là một nhịp cầu kết nối tâm hồn – tôi khai thác vẻ đẹp đa chiều của văn hóa và nghệ thuật để kể những câu chuyện đầy cảm xúc, gần gũi mà sâu sắc. Đây không chỉ là hành trình sáng tạo, mà còn là cách tôi lan tỏa cảm hứng và giá trị nhân văn đến cộng đồng.',
+    ...defaultHomeContent,
     projects: []
   });
 
@@ -342,10 +344,23 @@ const HomeSection: FC<HomeSectionProps> = ({ defaultIsEditing }) => {
     }
   }, [projects]);
 
-  const handleSave = (updatedContent: HomeContent) => {
-    console.log('Saving content:', updatedContent);
-    setContent(updatedContent);
-    // Here you would typically save the content to an API
+  const handleContentChange = (field: keyof HomeContent, value: string | Project[]) => {
+    setContent(prev => ({
+      ...prev,
+      [field]: value
+    }));
+  };
+
+  const handleSaveToFile = async () => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { projects: _, ...contentWithoutProjects } = content;
+    await saveToContentFile('homeContent', contentWithoutProjects);
+  };
+
+  const handleDownload = () => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { projects: _, ...contentWithoutProjects } = content;
+    downloadContentFile('homeContent', contentWithoutProjects);
   };
 
   if (loading) {
@@ -364,12 +379,40 @@ const HomeSection: FC<HomeSectionProps> = ({ defaultIsEditing }) => {
 
   return (
     <div className="home-section">
-      <EditableHomeSection
-        key={`home-${content.projects.length}`}
-        defaultContent={content}
-        onSave={handleSave}
-        defaultIsEditing={defaultIsEditing}
+      <HomeSectionContent
+        content={content}
+        onContentChange={handleContentChange}
       />
+      
+      {/* Save buttons when in edit mode */}
+      {isEditMode && (
+        <div style={{ 
+          position: 'fixed', 
+          bottom: 20, 
+          right: 20, 
+          zIndex: 1000,
+          display: 'flex',
+          gap: '8px'
+        }}>
+          <Button
+            type="primary"
+            icon={<CopyOutlined />}
+            onClick={handleSaveToFile}
+            style={{
+              backgroundColor: '#52c41a',
+              borderColor: '#52c41a',
+            }}
+          >
+            Copy code
+          </Button>
+          <Button
+            icon={<DownloadOutlined />}
+            onClick={handleDownload}
+          >
+            Download
+          </Button>
+        </div>
+      )}
     </div>
   );
 };

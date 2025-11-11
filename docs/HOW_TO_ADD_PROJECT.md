@@ -13,6 +13,11 @@
 
 3. **Điền thông tin**:
    - **Tiêu đề**: Tên dự án (VD: "Neon Dreams")
+   - **Thể loại / Genre**: Thể loại âm nhạc (VD: "Electronic Music", "Ambient", "Live Performance")
+   - **Category**: Chọn category cho project
+     - **Featured**: Hiển thị ở trang chủ (HomeSection)
+     - **Portfolio**: Hiển thị ở trang Portfolio
+     - **Other**: Các project khác
    - **Thời lượng**: Định dạng MM:SS (VD: "4:32")
    - **Năm**: 4 chữ số (VD: "2024")
    - **Link video**: URL YouTube đầy đủ (VD: "https://www.youtube.com/watch?v=...")
@@ -93,6 +98,8 @@ INSERT INTO projects (title, description, genre, year, image_url, category, "ord
 
 ### Thông tin bắt buộc:
 - ✅ **title**: Không được để trống
+- ✅ **genre**: Thể loại âm nhạc (VD: "Electronic Music", "Ambient")
+- ✅ **category**: Phải chọn một trong ba (featured/portfolio/other)
 - ✅ **year**: 4 chữ số (2020-2099)
 - ✅ **time/duration**: Định dạng MM:SS hoặc M:SS
 - ✅ **video**: URL YouTube hợp lệ
@@ -105,9 +112,15 @@ INSERT INTO projects (title, description, genre, year, image_url, category, "ord
 - Tối thiểu: 800x450px
 
 ### Categories:
-- `featured`: Projects hiển thị ở HomeSection
-- `portfolio`: Projects hiển thị ở Portfolio page
-- `other`: Projects khác
+- `featured`: Projects hiển thị ở HomeSection (trang chủ)
+- `portfolio`: Projects hiển thị ở Portfolio page (có thể filter theo genre)
+- `other`: Projects khác (không hiển thị trên website)
+
+### Genres (Thể loại):
+- Genres được sử dụng để filter projects trong PortfolioSection
+- Mỗi project có thể có genre riêng (VD: "Music Production", "Electronic Music", "Ambient", "Live Performance")
+- Các genre sẽ tự động xuất hiện như các nút filter trong Portfolio page
+- Users có thể click vào genre để xem các projects thuộc thể loại đó
 
 ## Xóa và Sửa Project
 

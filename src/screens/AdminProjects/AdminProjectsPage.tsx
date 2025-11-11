@@ -3,6 +3,7 @@ import { Table, Button, Space, Tag, Image, Switch, message, Popconfirm, Card, St
 import { EditOutlined, DeleteOutlined, PlusOutlined, EyeOutlined, ReloadOutlined } from '@ant-design/icons';
 import { useProjects, useProjectMutations } from '../../hooks/useProjects';
 import EditProjectModal from '../../components/EditProjectModal';
+import EditModeToggle from '../../components/EditModeToggle';
 import type { Project } from '../../types/project';
 import type { ColumnsType } from 'antd/es/table';
 
@@ -13,6 +14,8 @@ interface UIProject {
   year: string;
   video: string;
   title?: string;
+  category?: 'featured' | 'portfolio' | 'other';
+  genre?: string;
 }
 
 const AdminProjectsPage: React.FC = () => {
@@ -31,15 +34,18 @@ const AdminProjectsPage: React.FC = () => {
     year: dbProject.year,
     video: (dbProject.metadata?.video_url as string) || "",
     title: dbProject.title,
+    category: dbProject.category || 'portfolio',
+    genre: dbProject.genre,
   });
 
   // Convert UI project to DB format
   const toDBProject = (uiProject: UIProject) => ({
     title: uiProject.title || `Project ${uiProject.id}`,
     description: "",
-    genre: "Music Production",
+    genre: uiProject.genre || "Music Production",
     year: uiProject.year,
     image_url: uiProject.img,
+    category: uiProject.category || 'portfolio',
     metadata: {
       duration: uiProject.time,
       video_url: uiProject.video,
@@ -228,6 +234,9 @@ const AdminProjectsPage: React.FC = () => {
 
   return (
     <div style={{ padding: 24, background: '#1e1e1e', minHeight: '100vh' }}>
+      {/* Login/Logout Button */}
+      <EditModeToggle />
+      
       <div style={{ maxWidth: 1400, margin: '0 auto' }}>
         <div style={{ marginBottom: 24, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <h1 style={{ color: '#eaeaea', margin: 0 }}>Quản lý Projects</h1>

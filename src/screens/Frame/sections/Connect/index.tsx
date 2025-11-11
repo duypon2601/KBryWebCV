@@ -1,7 +1,6 @@
 import { MailOutlined, PhoneOutlined } from "@ant-design/icons";
 import { Button, Col, Form, Input, Row, Typography } from "antd";
 import type { JSX } from "react";
-import AutoAdvanceOnScroll from "../../../../components/AutoAdvanceOnScroll/AutoAdvanceOnScroll";
 
 const { Title, Paragraph } = Typography;
 
@@ -29,9 +28,7 @@ const Connect = (): JSX.Element => {
             Get In Touch
           </Title>
           <Paragraph style={{ color: "#a9a9a9", textAlign: "left" }}>
-            Whether you're looking for collaborations, bookings, or media
-            inquiries, I'm always excited to connect with fellow creatives and
-            music lovers.
+            Dù bạn đang tìm kiếm cơ hội hợp tác, đặt lịch (booking), hay liên hệ về truyền thông, tôi luôn hào hứng kết nối với những người cùng đam mê sáng tạo và yêu âm nhạc.
           </Paragraph>
           
           <div style={{ marginTop: "40px" }}>
@@ -53,7 +50,7 @@ const Connect = (): JSX.Element => {
                   Email
                 </Title>
                 <Paragraph style={{ color: "#a9a9a9", marginBottom: 0 }}>
-                  contact@example.com
+                  ryfingerstyle@gmail.com
                 </Paragraph>
               </Col>
             </Row>
@@ -76,7 +73,7 @@ const Connect = (): JSX.Element => {
                   Phone
                 </Title>
                 <Paragraph style={{ color: "#a9a9a9", marginBottom: 0 }}>
-                  +1 (234) 567-8901
+                  +84 347 284 324
                 </Paragraph>
               </Col>
             </Row>
@@ -185,7 +182,6 @@ const Connect = (): JSX.Element => {
           </div>
         </Col>
       </Row>
-      <AutoAdvanceOnScroll />
     </div>
   );
 };

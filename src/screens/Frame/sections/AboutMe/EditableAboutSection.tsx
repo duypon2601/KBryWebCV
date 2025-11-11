@@ -1,6 +1,9 @@
 import { Button, Card, Col, Divider, Input, Row, Typography } from "antd";
-import { EditOutlined, SaveOutlined, CloseOutlined } from "@ant-design/icons";
+import { SaveOutlined, CloseOutlined, DownloadOutlined, CopyOutlined } from "@ant-design/icons";
 import React, { useState, type JSX } from "react";
+import { useEdit } from "../../../../contexts/EditContextCore";
+import { aboutContent as defaultAboutContent } from "../../../../data/aboutContent";
+import { saveToContentFile, downloadContentFile } from "../../../../services/contentFileService";
 
 const { Title, Text, Paragraph } = Typography;
 const { TextArea } = Input;
@@ -16,66 +19,49 @@ interface AboutContent {
     description: string;
     year: string;
   };
+  [key: string]: unknown; // Add index signature for Record<string, unknown> constraint
 }
 
-const defaultContent: AboutContent = {
-  aboutMe: "Music has been my universal language since childhood. Growing up in a household filled with vinyl records and late-night jam sessions, I discovered that melodies could express what words couldn't capture.",
-  inspiration: "My sound draws inspiration from jazz legends like Miles Davis, the raw energy of indie rock, and the intricate production techniques of modern electronic music. This eclectic mix creates a unique sonic landscape that bridges generations and genres.",
-  philosophy: "I believe music should tell stories, evoke emotions, and create connections between strangers. Every track I produce is a chapter in an ongoing narrative about human experience, love, loss, and the beautiful chaos of existence.",
-  quote: "\"Music is the soundtrack to life's most important moments. My goal is to create those moments for others.\"",
-  education: {
-    school: "Berklee College of Music",
-    degree: "Bachelor's in Music Production & Engineering",
-    description: "Studied under renowned producers and learned the technical foundations that shape my sound today. Specialized in electronic music composition and live sound engineering.",
-    year: "2018-2022"
-  }
-};
+const defaultContent: AboutContent = defaultAboutContent;
 
 const EditableAboutSection: React.FC = (): JSX.Element => {
-  const [isEditing, setIsEditing] = useState(false);
+  const { isEditMode } = useEdit();
+  
   const [content, setContent] = useState<AboutContent>(defaultContent);
   const [editableContent, setEditableContent] = useState<AboutContent>(defaultContent);
 
-  const handleEdit = () => {
-    setEditableContent({ ...content });
-    setIsEditing(true);
-  };
-
-  const handleSave = () => {
-    setContent({ ...editableContent });
-    setIsEditing(false);
-    // Here you would typically save to an API
+  const handleSave = async () => {
+    setContent(editableContent);
+    await saveToContentFile('aboutContent', editableContent);
   };
 
   const handleCancel = () => {
-    setIsEditing(false);
+    setEditableContent(content);
+  };
+  
+  const handleDownload = () => {
+    downloadContentFile('aboutContent', editableContent);
   };
 
-  const renderEditControls = () => (
-    <div style={{ position: 'absolute', top: 20, right: 20, zIndex: 1 }}>
-      {isEditing ? (
-        <>
-          <Button 
-            type="text" 
-            icon={<SaveOutlined style={{ color: '#f5a623' }} />} 
-            onClick={handleSave}
-            style={{ marginRight: 8 }}
-          />
-          <Button 
-            type="text" 
-            icon={<CloseOutlined style={{ color: '#ff4d4f' }} />} 
-            onClick={handleCancel}
-          />
-        </>
-      ) : (
+  const renderEditControls = () => {
+    if (!isEditMode) return null;
+    
+    return (
+      <div style={{ position: 'absolute', top: 20, right: 20, zIndex: 1 }}>
         <Button 
           type="text" 
-          icon={<EditOutlined style={{ color: '#f5a623' }} />} 
-          onClick={handleEdit}
+          icon={<SaveOutlined style={{ color: '#f5a623' }} />} 
+          onClick={handleSave}
+          style={{ marginRight: 8 }}
         />
-      )}
-    </div>
-  );
+        <Button 
+          type="text" 
+          icon={<CloseOutlined style={{ color: '#ff4d4f' }} />} 
+          onClick={handleCancel}
+        />
+      </div>
+    );
+  };
 
   return (
     <div style={{ width: "100%", position: "relative" }}>
@@ -95,7 +81,7 @@ const EditableAboutSection: React.FC = (): JSX.Element => {
           </Title>
           <Text style={{ fontSize: 24, color: "#eaeaea" }}>🎤</Text>
           
-          {isEditing ? (
+          {isEditMode ? (
             <>
               <TextArea
                 value={editableContent.aboutMe}
@@ -152,7 +138,7 @@ const EditableAboutSection: React.FC = (): JSX.Element => {
               borderRadius: 10,
             }}
           >
-            {isEditing ? (
+            {isEditMode ? (
               <TextArea
                 value={editableContent.quote}
                 onChange={(e) => setEditableContent({...editableContent, quote: e.target.value})}
@@ -196,7 +182,7 @@ const EditableAboutSection: React.FC = (): JSX.Element => {
           >
             <Row>
               <Col span={20}>
-                {isEditing ? (
+                {isEditMode ? (
                   <>
                     <Input
                       value={editableContent.education.school}
@@ -266,7 +252,7 @@ const EditableAboutSection: React.FC = (): JSX.Element => {
                 )}
               </Col>
               <Col span={4} style={{ textAlign: "right" }}>
-                {isEditing ? (
+                {isEditMode ? (
                   <Input
                     value={editableContent.education.year}
                     onChange={(e) => setEditableContent({
@@ -292,6 +278,43 @@ const EditableAboutSection: React.FC = (): JSX.Element => {
           </Card>
         </Col>
       </Row>
+      
+      {/* Save buttons when in edit mode */}
+      {isEditMode && (
+        <div style={{ 
+          position: 'fixed', 
+          bottom: 20, 
+          right: 20, 
+          zIndex: 1000,
+          display: 'flex',
+          gap: '8px'
+        }}>
+          <Button
+            type="primary"
+            icon={<CopyOutlined />}
+            onClick={handleSave}
+            style={{
+              backgroundColor: '#52c41a',
+              borderColor: '#52c41a',
+            }}
+          >
+            Copy code
+          </Button>
+          <Button
+            icon={<DownloadOutlined />}
+            onClick={handleDownload}
+          >
+            Download
+          </Button>
+          <Button
+            icon={<CloseOutlined />}
+            onClick={handleCancel}
+            danger
+          >
+            Hủy
+          </Button>
+        </div>
+      )}
     </div>
   );
 };

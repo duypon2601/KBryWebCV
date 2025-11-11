@@ -39,6 +39,7 @@ export const AutoAdvanceOnScroll: React.FC<AutoAdvanceOnScrollProps> = ({
   const isArmedRef = useRef<boolean>(false);
   const armedAtScrollYRef = useRef<number>(0);
   const userScrolledRef = useRef<boolean>(false);
+  const overscrollAttemptRef = useRef<number>(0);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -49,18 +50,32 @@ export const AutoAdvanceOnScroll: React.FC<AutoAdvanceOnScrollProps> = ({
     hasNavigatedRef.current = false; // Reset per page
     isArmedRef.current = false;
     userScrolledRef.current = false;
+    overscrollAttemptRef.current = 0;
 
     // Always start each page at top to ensure visible content and prevent re-trigger loops
     window.scrollTo({ top: 0, behavior: 'instant' as ScrollBehavior });
     document.documentElement.removeAttribute('data-nav-direction');
 
-    // Set up listeners to detect real user scroll attempts (for pages without scroll space)
-    const onWheel = () => {
+    // Set up listeners to detect real user scroll attempts and overscroll
+    const onWheel = (e: WheelEvent) => {
       userScrolledRef.current = true;
+      
+      // Detect overscroll attempts
+      const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
+      const atBottom = scrollTop + clientHeight >= scrollHeight - 5;
+      const atTop = scrollTop <= 5;
+      
+      if ((atBottom && e.deltaY > 0) || (atTop && e.deltaY < 0)) {
+        overscrollAttemptRef.current += 1;
+      } else {
+        overscrollAttemptRef.current = 0;
+      }
     };
+    
     const onTouchMove = () => {
       userScrolledRef.current = true;
     };
+    
     window.addEventListener('wheel', onWheel, { passive: true });
     window.addEventListener('touchmove', onTouchMove, { passive: true });
 
@@ -86,11 +101,6 @@ export const AutoAdvanceOnScroll: React.FC<AutoAdvanceOnScrollProps> = ({
   }, [normalizedPathname]);
 
   useEffect(() => {
-    const rootHasScrollableSpace = () => {
-      const { scrollHeight, clientHeight } = document.documentElement;
-      return scrollHeight > clientHeight + 16; // small buffer
-    };
-
     const navigateWithTransition = (path: string, direction: 'forward' | 'backward') => {
       document.documentElement.setAttribute('data-nav-direction', direction);
       const perform = () => navigate(path);
@@ -124,14 +134,20 @@ export const AutoAdvanceOnScroll: React.FC<AutoAdvanceOnScrollProps> = ({
 
     const onScroll = () => {
       if (hasNavigatedRef.current) return;
-      if (!rootHasScrollableSpace()) return;
       if (!canNavigate()) return;
 
-      const { scrollHeight, clientHeight } = document.documentElement;
+      const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
+      const hasScrollSpace = scrollHeight > clientHeight + 16;
+      
+      if (!hasScrollSpace) return; // Skip if no scrollable content
+      
       const maxScrollable = Math.max(1, scrollHeight - clientHeight);
-      const progress = Math.max(0, Math.min(1, window.scrollY / maxScrollable));
+      const progress = Math.max(0, Math.min(1, scrollTop / maxScrollable));
+      const atBottom = scrollTop + clientHeight >= scrollHeight - 10;
+      const atTop = scrollTop <= 10;
 
-      if (progress >= threshold) {
+      // Navigate forward when at bottom with overscroll attempts OR high scroll progress
+      if (atBottom && (overscrollAttemptRef.current >= 1 || progress >= threshold)) {
         const index = routeOrder.indexOf(normalizedPathname);
         if (index === -1) return;
         const isLast = index >= routeOrder.length - 1;
@@ -139,7 +155,9 @@ export const AutoAdvanceOnScroll: React.FC<AutoAdvanceOnScrollProps> = ({
         const nextPath = isLast ? routeOrder[0] : routeOrder[index + 1];
         lastNavigationAtMs = Date.now();
         navigateWithTransition(nextPath, 'forward');
-      } else if (enableUpwardNavigation && window.scrollY <= 2) {
+      } 
+      // Navigate backward when at top with overscroll attempts
+      else if (enableUpwardNavigation && atTop && overscrollAttemptRef.current >= 1) {
         const index = routeOrder.indexOf(normalizedPathname);
         if (index === -1) return;
         const isFirst = index <= 0;

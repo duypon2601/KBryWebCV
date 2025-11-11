@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Modal, Form, Input, Button, message, Upload, Image } from 'antd';
+import { Modal, Form, Input, Button, message, Upload, Image, Select } from 'antd';
 import { DeleteOutlined, UploadOutlined } from '@ant-design/icons';
 import { useImageUpload } from '../../hooks/useImageUpload';
 
@@ -10,6 +10,8 @@ interface Project {
   year: string;
   video: string;
   title?: string;
+  category?: 'featured' | 'portfolio' | 'other';
+  genre?: string;
 }
 
 interface EditProjectModalProps {
@@ -39,10 +41,12 @@ const EditProjectModal: React.FC<EditProjectModalProps> = ({
     if (visible && project) {
       form.setFieldsValue({
         title: project.title || '',
+        genre: project.genre || '',
         time: project.time,
         year: project.year,
         video: project.video,
         img: project.img,
+        category: project.category || 'portfolio',
       });
       setImageUrl(project.img);
       setImageFile(null);
@@ -81,10 +85,12 @@ const EditProjectModal: React.FC<EditProjectModalProps> = ({
       const updatedProject: Project = {
         id: project?.id || `project_${Date.now()}`,
         title: values.title.trim(),
+        genre: values.genre.trim(),
         time: values.time.trim(),
         year: values.year.trim(),
         video: values.video.trim(),
         img: finalImageUrl,
+        category: values.category,
       };
 
       onSave(updatedProject);
@@ -146,10 +152,12 @@ const EditProjectModal: React.FC<EditProjectModalProps> = ({
         layout="vertical"
         initialValues={{
           title: '',
+          genre: '',
           time: '',
           year: '',
           video: '',
           img: '',
+          category: 'portfolio',
         }}
       >
         <Form.Item
@@ -158,6 +166,26 @@ const EditProjectModal: React.FC<EditProjectModalProps> = ({
           rules={[{ required: true, message: 'Vui lòng nhập tiêu đề dự án!' }]}
         >
           <Input placeholder="Nhập tiêu đề dự án" />
+        </Form.Item>
+
+        <Form.Item
+          label="Thể loại / Genre"
+          name="genre"
+          rules={[{ required: true, message: 'Vui lòng nhập thể loại!' }]}
+        >
+          <Input placeholder="VD: Music Production, Electronic Music, Ambient..." />
+        </Form.Item>
+
+        <Form.Item
+          label="Category"
+          name="category"
+          rules={[{ required: true, message: 'Vui lòng chọn category!' }]}
+        >
+          <Select placeholder="Chọn category">
+            <Select.Option value="featured">Featured (Trang chủ)</Select.Option>
+            <Select.Option value="portfolio">Portfolio</Select.Option>
+            <Select.Option value="other">Other (Khác)</Select.Option>
+          </Select>
         </Form.Item>
 
         <Form.Item
