@@ -37,14 +37,10 @@ const HomeSectionContent: React.FC<HomeSectionContentProps> = ({
   onContentChange
 }: HomeSectionContentProps) => {
   return (
-    <div style={{ width: "100%", position: "relative", display: "flex", minHeight: "100vh" }}>
-      {/* Sidebar with Featured Projects */}
-      <div className="w-[300px] flex-none bg-[#151515] border-r border-[#2d2d2d] overflow-visible">
-        <FeaturedProjectsSection defaultIsEditing={isEditing} />
-      </div>
-
+    <div style={{ width: "100%", position: "relative" }}>
       {/* Main Content */}
-      <div className="flex-1 min-w-0 max-w-full overflow-x-hidden">
+      <div style={{ width: "100%" }}>
+        {/* Hero Section with Sidebar */}
         <div
           style={{
             width: "100%",
@@ -58,6 +54,16 @@ const HomeSectionContent: React.FC<HomeSectionContentProps> = ({
             padding: "2rem 1rem",
           }}
         >
+          {/* Sidebar with Featured Projects - only in hero */}
+          <div className="w-[300px] flex-none bg-[#151515] border-r border-[#2d2d2d]" style={{ 
+            position: "absolute", 
+            left: 0, 
+            top: 0, 
+            height: "100%",
+            overflowY: "auto"
+          }}>
+            <FeaturedProjectsSection defaultIsEditing={isEditing} />
+          </div>
           <div
             style={{
               position: "fixed",
@@ -72,6 +78,7 @@ const HomeSectionContent: React.FC<HomeSectionContentProps> = ({
               backgroundRepeat: "no-repeat",
               opacity: 0.1,
               zIndex: 0,
+              pointerEvents: "none",
             }}
           />
           <div
@@ -82,6 +89,7 @@ const HomeSectionContent: React.FC<HomeSectionContentProps> = ({
               maxWidth: 1200,
               margin: "0 auto",
               padding: "0 1rem",
+              marginLeft: "300px", // Offset for sidebar
             }}
           >
             <div style={{

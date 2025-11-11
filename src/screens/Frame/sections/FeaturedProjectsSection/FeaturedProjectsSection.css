@@ -1,0 +1,276 @@
+.featured-projects-section {
+  background-color: #151515;
+  border-right: 1px solid #2d2d2d;
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: visible;
+  padding-top: 1rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  padding-bottom: 1rem;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+@media (min-width: 768px) {
+  .featured-projects-section {
+    padding-top: 1.5rem;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+}
+
+.featured-projects-section .profile-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.featured-projects-section .profile-image {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  box-shadow: 0px 0px 20px #f5a6234c;
+}
+
+.featured-projects-section .profile-name {
+  margin-top: 16px;
+  color: #eaeaea;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.featured-projects-section .profile-title {
+  color: #a9a9a9;
+  font-size: 14px;
+}
+
+.featured-projects-section .editable-input {
+  text-align: center;
+  color: #eaeaea;
+  background-color: transparent;
+  border: 1px dashed #f5a623;
+}
+
+.featured-projects-section .editable-input-title {
+  color: #a9a9a9;
+  font-size: 14px;
+  text-align: center;
+  background-color: transparent;
+  border: 1px dashed #f5a623;
+}
+
+.featured-projects-section .info-item {
+  color: #a9a9a9;
+}
+
+.featured-projects-section .info-icon {
+  color: #a9a9a9;
+}
+
+.featured-projects-section .info-input {
+  margin-left: 8px;
+  color: #a9a9a9;
+  background-color: transparent;
+  border: 1px dashed #f5a623;
+  width: calc(100% - 24px);
+}
+
+.featured-projects-section .info-text {
+  margin-left: 8px;
+  color: #a9a9a9;
+}
+
+.featured-projects-section .section-title {
+  color: #eaeaea;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.featured-projects-section .skill-label {
+  display: flex;
+  justify-content: space-between;
+  color: #a9a9a9;
+  font-size: 12px;
+}
+
+.featured-projects-section .skill-input {
+  margin-top: 4px;
+  width: 60px;
+  background-color: transparent;
+  border: 1px dashed #f5a623;
+}
+
+.featured-projects-section .language-circle {
+  width: 48px;
+  height: 48px;
+  background-color: #2d2d2d;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.featured-projects-section .language-code {
+  color: #f5a623;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.featured-projects-section .language-badge {
+  width: 20px;
+  height: 20px;
+  background-color: #f5a623;
+  border-radius: 50%;
+  position: absolute;
+  bottom: -10px;
+  right: -10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.featured-projects-section .language-badge-text {
+  color: #1e1e1e;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.featured-projects-section .language-input {
+  position: absolute;
+  bottom: -30px;
+  right: -10px;
+  width: 40px;
+  background-color: transparent;
+  border: 1px dashed #f5a623;
+}
+
+.featured-projects-section .language-icon {
+  width: 20px;
+  height: 20px;
+}
+
+.featured-projects-section .language-name {
+  margin-top: 8px;
+  color: #a9a9a9;
+  font-size: 12px;
+}
+
+.featured-projects-section .btn-primary {
+  background-color: #f5a623;
+  border-color: #f5a623;
+  color: #1e1e1e;
+}
+
+.featured-projects-section .btn-secondary {
+  margin-top: 16px;
+  border-color: #2d2d2d;
+  color: #eaeaea;
+}
+
+/* Social Media Buttons */
+.featured-projects-section .social-section-title {
+  margin-top: 16px;
+  text-align: center;
+}
+
+.featured-projects-section .social-input {
+  background-color: transparent;
+  border: 1px dashed #f5a623;
+  color: #a9a9a9;
+  font-size: 12px;
+}
+
+.featured-projects-section .btn-youtube {
+  background-color: #FF0000;
+  border-color: #FF0000;
+  color: #ffffff;
+  font-weight: bold;
+  transition: all 0.3s ease;
+}
+
+.featured-projects-section .btn-youtube:hover {
+  background-color: #cc0000;
+  border-color: #cc0000;
+  color: #ffffff;
+}
+
+.featured-projects-section .btn-youtube-band {
+  background-color: #c4302b;
+  border-color: #c4302b;
+  color: #ffffff;
+  font-weight: bold;
+  transition: all 0.3s ease;
+}
+
+.featured-projects-section .btn-youtube-band:hover {
+  background-color: #a02622;
+  border-color: #a02622;
+  color: #ffffff;
+}
+
+.featured-projects-section .btn-facebook {
+  background-color: #1877F2;
+  border-color: #1877F2;
+  color: #ffffff;
+  font-weight: bold;
+  transition: all 0.3s ease;
+}
+
+.featured-projects-section .btn-facebook:hover {
+  background-color: #145dbf;
+  border-color: #145dbf;
+  color: #ffffff;
+}
+
+.featured-projects-section .btn-facebook-fanpage {
+  background-color: #0866FF;
+  border-color: #0866FF;
+  color: #ffffff;
+  font-weight: bold;
+  transition: all 0.3s ease;
+}
+
+.featured-projects-section .btn-facebook-fanpage:hover {
+  background-color: #0652cc;
+  border-color: #0652cc;
+  color: #ffffff;
+}
+
+.featured-projects-section .btn-spotify {
+  background-color: #1DB954;
+  border-color: #1DB954;
+  color: #ffffff;
+  font-weight: bold;
+  transition: all 0.3s ease;
+}
+
+.featured-projects-section .btn-spotify:hover {
+  background-color: #179443;
+  border-color: #179443;
+  color: #ffffff;
+}
+
+.featured-projects-section .divider-image {
+  width: 100%;
+  margin-top: 16px;
+}
+
+.featured-projects-section .loading-container {
+  display: flex;
+  justify-content: center;
+  padding: 48px;
+}
+
+.featured-projects-section .language-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.featured-projects-section .language-col {
+  text-align: center;
+}
