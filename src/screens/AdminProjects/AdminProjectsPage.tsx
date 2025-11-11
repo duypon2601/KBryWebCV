@@ -20,7 +20,7 @@ interface UIProject {
 
 const AdminProjectsPage: React.FC = () => {
   const { projects, loading, refetch } = useProjects();
-  const { updateProject, deleteProject, togglePublished } = useProjectMutations();
+  const { createProject, updateProject, deleteProject, togglePublished } = useProjectMutations();
   
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [editingProject, setEditingProject] = useState<UIProject | null>(null);
@@ -67,15 +67,24 @@ const AdminProjectsPage: React.FC = () => {
   const handleSave = async (uiProject: UIProject) => {
     try {
       const dbData = toDBProject(uiProject);
-      const result = await updateProject(uiProject.id, dbData);
+      
+      let result;
+      if (isNewProject || !uiProject.id) {
+        // Create new project - don't pass the ID, let database generate it
+        result = await createProject(dbData);
+      } else {
+        // Update existing project
+        result = await updateProject(uiProject.id, dbData);
+      }
       
       if (result) {
-        message.success('Cập nhật thành công!');
+        message.success(isNewProject ? 'Thêm project thành công!' : 'Cập nhật thành công!');
         refetch();
         setIsModalVisible(false);
         setEditingProject(null);
+        setIsNewProject(false);
       } else {
-        message.error('Cập nhật thất bại!');
+        message.error(isNewProject ? 'Thêm project thất bại!' : 'Cập nhật thất bại!');
       }
     } catch (error) {
       console.error('Error saving project:', error);

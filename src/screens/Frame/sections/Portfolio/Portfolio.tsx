@@ -22,7 +22,7 @@ const Portfolio = (): React.ReactElement => {
             <PortfolioSection />
           </Col>
         </Row>
-        <Row>
+        <Row style={{ marginTop: 32 }}>
           <Col span={24}>
             <ProjectsSection />
           </Col>
