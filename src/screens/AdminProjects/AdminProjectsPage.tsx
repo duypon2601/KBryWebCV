@@ -3,6 +3,7 @@ import { Table, Button, Space, Tag, Image, Switch, message, Popconfirm, Card, St
 import { EditOutlined, DeleteOutlined, PlusOutlined, EyeOutlined, ReloadOutlined } from '@ant-design/icons';
 import { useProjects, useProjectMutations } from '../../hooks/useProjects';
 import EditProjectModal from '../../components/EditProjectModal';
+import EditModeToggle from '../../components/EditModeToggle';
 import type { Project } from '../../types/project';
 import type { ColumnsType } from 'antd/es/table';
 
@@ -233,6 +234,9 @@ const AdminProjectsPage: React.FC = () => {
 
   return (
     <div style={{ padding: 24, background: '#1e1e1e', minHeight: '100vh' }}>
+      {/* Login/Logout Button */}
+      <EditModeToggle />
+      
       <div style={{ maxWidth: 1400, margin: '0 auto' }}>
         <div style={{ marginBottom: 24, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <h1 style={{ color: '#eaeaea', margin: 0 }}>Quản lý Projects</h1>

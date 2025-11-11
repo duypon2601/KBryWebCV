@@ -23,7 +23,7 @@ const Connect = (): JSX.Element => {
     phone: "+1 (555) 123-4567",
     heading: "Let's Connect",
     subheading: "Get In Touch",
-    description: "Whether you're looking for collaborations, bookings, or media inquiries, I'm always excited to connect with fellow creatives and music lovers.",
+    description: "Dù bạn đang tìm kiếm cơ hội hợp tác, đặt lịch (booking), hay liên hệ về truyền thông, tôi luôn hào hứng kết nối với những người cùng đam mê sáng tạo và yêu âm nhạc.",
     followText: "Follow My Journey"
   });
 

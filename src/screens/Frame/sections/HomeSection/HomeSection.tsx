@@ -1,6 +1,5 @@
 import { Button, Card, Col, Divider, Input, Row, Typography, Spin } from "antd";
 import { DownloadOutlined, CopyOutlined } from "@ant-design/icons";
-import AutoAdvanceOnScroll from "../../../../components/AutoAdvanceOnScroll/AutoAdvanceOnScroll";
 import { FeaturedProjectsSection } from "../FeaturedProjectsSection/FeaturedProjectsSection";
 import React, { useState, useEffect } from 'react';
 import type { FC } from 'react';
@@ -313,7 +312,6 @@ const HomeSectionContent: React.FC<HomeSectionContentProps> = ({
           </div>
         </div>
       </div>
-      <AutoAdvanceOnScroll threshold={0.95} />
     </div>
   );
 };

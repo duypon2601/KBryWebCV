@@ -2,7 +2,14 @@
 
 ## Truy cập trang Admin
 
-Mở URL: `http://localhost:5173/admin/projects` (hoặc domain của bạn)
+1. **Mở URL**: `http://localhost:5173/admin/projects` (hoặc domain của bạn)
+
+2. **Đăng nhập**: 
+   - Click nút **"Đăng nhập"** ở góc trên bên phải
+   - Nhập mật khẩu (mặc định: `admin123`)
+   - Sau khi đăng nhập thành công, bạn sẽ thấy nút "Đăng xuất"
+
+3. **Bắt đầu quản lý**: Bạn có thể xem, thêm, sửa, xóa projects sau khi đăng nhập
 
 ## Tính năng
 

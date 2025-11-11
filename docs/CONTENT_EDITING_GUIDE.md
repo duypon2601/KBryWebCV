@@ -8,7 +8,8 @@ Hệ thống chỉnh sửa nội dung cho phép bạn chỉnh sửa các thông 
 
 ### 1. **Vào chế độ chỉnh sửa**
 - Mở website ở local: `http://localhost:5173`
-- Click nút **"Đăng nhập"** ở góc trên bên phải
+- Vào trang admin: `http://localhost:5173/admin/projects`
+- Click nút **"Đăng nhập"** ở góc trên bên phải của trang admin
 - Nhập mật khẩu (mặc định: `admin123`)
 - Các trường có thể chỉnh sửa sẽ hiển thị
 
