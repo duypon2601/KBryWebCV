@@ -13,6 +13,8 @@ interface UIProject {
   year: string;
   video: string;
   title?: string;
+  category?: 'featured' | 'portfolio' | 'other';
+  genre?: string;
 }
 
 const AdminProjectsPage: React.FC = () => {
@@ -31,15 +33,18 @@ const AdminProjectsPage: React.FC = () => {
     year: dbProject.year,
     video: (dbProject.metadata?.video_url as string) || "",
     title: dbProject.title,
+    category: dbProject.category || 'portfolio',
+    genre: dbProject.genre,
   });
 
   // Convert UI project to DB format
   const toDBProject = (uiProject: UIProject) => ({
     title: uiProject.title || `Project ${uiProject.id}`,
     description: "",
-    genre: "Music Production",
+    genre: uiProject.genre || "Music Production",
     year: uiProject.year,
     image_url: uiProject.img,
+    category: uiProject.category || 'portfolio',
     metadata: {
       duration: uiProject.time,
       video_url: uiProject.video,
