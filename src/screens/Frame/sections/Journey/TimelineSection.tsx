@@ -6,107 +6,39 @@ import {
   UserOutlined,
   FilterOutlined,
 } from "@ant-design/icons";
-import { Card, Col, Row, Typography, Button, Space, Statistic } from "antd";
-import React, { useState } from "react";
+import { Card, Col, Row, Typography, Button, Space, Statistic, Spin, Alert } from "antd";
+import React, { useState, useMemo } from "react";
+import { useTimelineItems } from "../../../../hooks/useTimelineItems";
+import type { TimelineItem as TimelineItemType } from "../../../../types/timeline";
 
 const { Title, Text, Paragraph } = Typography;
 
-interface TimelineItem {
-  year: string;
-  title: string;
-  location: string;
-  description: string[];
-  icon: React.ReactNode;
-  color: string;
-  image: string;
-  category: 'work' | 'education' | 'award' | 'freelance';
-}
+// Icon mapping from string to React component
+const iconMap: Record<string, React.ReactNode> = {
+  CalendarOutlined: <CalendarOutlined />,
+  TrophyOutlined: <TrophyOutlined />,
+  AudioOutlined: <AudioOutlined />,
+  UserOutlined: <UserOutlined />,
+  BookOutlined: <BookOutlined />,
+};
 
-const timelineData: TimelineItem[] = [
-  {
-    year: "2024 - Present",
-    title: "Senior Audio Engineer",
-    location: "Harmony Studios, Los Angeles",
-    description: [
-      "Lead mixing engineer for 50+ commercial releases",
-      "Collaborated with Grammy-nominated artists",
-      "Implemented Dolby Atmos workflow",
-    ],
-    icon: <CalendarOutlined />,
-    color: "#f5a623",
-    image: "https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?w=400&h=250&fit=crop",
-    category: 'work',
-  },
-  {
-    year: "2022",
-    title: "Best Sound Design Award",
-    location: "Independent Music Awards",
-    description: [
-      "Recognized for innovative sound design in electronic music production",
-    ],
-    icon: <TrophyOutlined />,
-    color: "#9d9abf",
-    image: "https://images.unsplash.com/photo-1567427017947-545c5f8d16ad?w=400&h=250&fit=crop",
-    category: 'award',
-  },
-  {
-    year: "2021",
-    title: "Coachella Performance",
-    location: "Live Sound Engineer",
-    description: [
-      "Managed live sound for main stage acts",
-      "Coordinated with 15+ technical crew members",
-      "Delivered flawless audio for 80,000+ audience",
-    ],
-    icon: <AudioOutlined />,
-    color: "#f5a623",
-    image: "https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=400&h=250&fit=crop",
-    category: 'work',
-  },
-  {
-    year: "2020 - 2024",
-    title: "Freelance Mixing Engineer",
-    location: "Remote Studio Work",
-    description: [
-      "Mixed 200+ tracks across multiple genres",
-      "Built home studio with professional equipment",
-      "Established client base of 50+ artists",
-    ],
-    icon: <UserOutlined />,
-    color: "#9d9abf",
-    image: "https://images.unsplash.com/photo-1519892300165-cb5542fb47c7?w=400&h=250&fit=crop",
-    category: 'freelance',
-  },
-  {
-    year: "2019",
-    title: "Audio Engineering Certification",
-    location: "Berklee College of Music",
-    description: [
-      "Specialized in Digital Audio Production",
-      "Graduated Summa Cum Laude",
-      "Thesis: 'AI in Music Production'",
-    ],
-    icon: <BookOutlined />,
-    color: "#f5a623",
-    image: "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=400&h=250&fit=crop",
-    category: 'education',
-  },
-  {
-    year: "2018",
-    title: "Junior Audio Engineer",
-    location: "SoundWave Studios, Nashville",
-    description: [
-      "First professional studio experience working with country and rock artists"
-    ],
-    icon: <UserOutlined />,
-    color: "#9d9abf",
-    image: "https://images.unsplash.com/photo-1511379938547-c1f69419868d?w=400&h=250&fit=crop",
-    category: 'work',
-  }
-];
+interface TimelineItemDisplay extends TimelineItemType {
+  iconComponent: React.ReactNode;
+}
 
 const TimelineSection: React.FC = () => {
   const [filter, setFilter] = useState<'all' | 'work' | 'education' | 'award' | 'freelance'>('all');
+  
+  // Fetch timeline items from database
+  const { timelineItems, loading, error } = useTimelineItems();
+  
+  // Transform timeline items to include icon components
+  const timelineData: TimelineItemDisplay[] = useMemo(() => {
+    return timelineItems.map(item => ({
+      ...item,
+      iconComponent: iconMap[item.icon] || <CalendarOutlined />,
+    }));
+  }, [timelineItems]);
   
   // Filter timeline data based on selected category
   const filteredData = filter === 'all' 
@@ -114,12 +46,34 @@ const TimelineSection: React.FC = () => {
     : timelineData.filter(item => item.category === filter);
 
   // Calculate statistics
-  const stats = {
+  const stats = useMemo(() => ({
     totalYears: 7,
     totalProjects: 250,
     awards: timelineData.filter(item => item.category === 'award').length,
     collaborations: 50,
-  };
+  }), [timelineData]);
+
+  if (loading) {
+    return (
+      <div style={{ width: "100%", padding: "100px 0", textAlign: "center" }}>
+        <Spin size="large" />
+        <div style={{ marginTop: 20, color: "#a9a9a9" }}>Loading timeline...</div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div style={{ width: "100%", padding: "50px 20px" }}>
+        <Alert
+          message="Error loading timeline"
+          description={error.message}
+          type="error"
+          showIcon
+        />
+      </div>
+    );
+  }
 
   return (
     <div style={{ width: "100%", position: "relative" }}>
@@ -398,7 +352,7 @@ const TimelineSection: React.FC = () => {
                       boxShadow: `0 0 10px ${item.color}40`,
                     }}
                   >
-                    {React.cloneElement(item.icon as React.ReactElement, {
+                    {React.cloneElement(item.iconComponent as React.ReactElement, {
                       // @ts-expect-error - The style prop is valid for the icon component
                       style: { color: item.color, fontSize: 18 },
                     })}
